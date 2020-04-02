@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "jsx": "react",
+    "noEmit": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["custom.d.ts"]
+}

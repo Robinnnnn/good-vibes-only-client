@@ -14,10 +14,11 @@ export const AuthenticatedSpotifySWRProvider: React.FC = ({ children }) => {
   const value = {
     fetcher: (action: keyof SpotifyWebApi.SpotifyWebApiJs, ...args) => {
       log.trace(`calling ${action}`, args)
-      const fn = sdk[action] as SpotifyRequestMethod;
+      const fn = sdk[action] as SpotifyRequestMethod
       return fn(...args)
     },
-    refreshInterval: 1000 * 60 * 5 // refresh data every 5 minutes    
+    refreshInterval: 1000 * 60 * 5, // refresh data every 5 minutes
+    suspense: true,
   }
   return <SWRConfig value={value}>{children}</SWRConfig>
 }

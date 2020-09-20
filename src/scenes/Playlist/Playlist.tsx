@@ -8,6 +8,8 @@ import clamp from 'lodash.clamp'
 import swap from 'lodash-move'
 import { useGesture } from 'react-use-gesture'
 import { useSprings, animated, interpolate } from 'react-spring'
+import TrackInfo from './TrackInfo'
+import { keyframes } from '@emotion/core'
 
 const height = 108
 
@@ -41,7 +43,6 @@ const Playlist: React.FC<RouteComponentProps> = ({ id }) => {
   const [springs, setSprings] = useSprings(tracks.length, fn(order.current)) // Create springs, each corresponds to an item, controlling its transform, scale, etc.
   console.log({ springs })
   const bind = useGesture(({ args: [originalIndex], down, delta: [, y] }) => {
-    console.log('bind')
     const curIndex = order.current.indexOf(originalIndex)
     const curRow = clamp(
       Math.round((curIndex * height + y) / 100),
@@ -75,20 +76,14 @@ const Playlist: React.FC<RouteComponentProps> = ({ id }) => {
             }}
             // children={tracks[i].track.id}
             children={
-              <Track className='track' key={covers[i][0].url}>
+              <Track position={i} className='track' key={covers[i][0].url}>
                 <AlbumCover index={i} imgUrl={covers[i][0].url} />
+                <TrackInfo position={i} data={tracks[i].track} />
               </Track>
             }
           />
         ))}
       </Tracks>
-      {/* <Tracks>
-        {covers.map(([c], index) => (
-          <Track key={c.url}>
-            <AlbumCover index={index} imgUrl={c.url} />
-          </Track>
-        ))}
-      </Tracks> */}
       {/* <button onClick={logout}>logout</button> */}
     </PlaylistContainer>
   )
@@ -104,17 +99,33 @@ const Tracks = styled.div`
   /* flex-wrap: wrap; */
 `
 
-const Track = styled.div`
+const fadein = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`
+
+const Track = styled.div<{ position: number }>`
   position: absolute;
   width: 500px;
 
+  /* background: white; */
+
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
 
   margin: 10px;
   cursor: pointer;
   user-select: none;
+
+  opacity: 0;
+  animation: ${fadein} 1200ms;
+  animation-delay: ${({ position }) => `${position * 100}ms`};
+  animation-fill-mode: forwards;
 `
 
 export default Playlist

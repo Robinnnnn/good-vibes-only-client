@@ -92,8 +92,16 @@ const CoverContainer = styled.div<{ position: number }>`
   animation-timing-function: cubic-bezier(0,1.39,.67,.98);
 
   /* neumorphism */
-  background: #f6e9ff;
-  box-shadow: 2px 2px 3px #d6cbde, -2px -2px 3px #ffffff;
+  background: #ffffff;
+box-shadow:  12px 12px 24px #d1d1d1, 
+             -12px -12px 24px #ffffff;
+  /* background: #f6e9ff;
+  box-shadow: 2px 2px 3px #d6cbde, -2px -2px 3px #ffffff; */
+ 
+  /* dark mode */
+ /* background: #303030;
+box-shadow:  14px 14px 26px #131313, 
+             -14px -14px 26px #4d4d4d; */
 
   &:hover .pic {
     animation: ${spin} 10s linear infinite;

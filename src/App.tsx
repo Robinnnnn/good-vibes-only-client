@@ -19,7 +19,7 @@ const App: React.FC = () => (
 
 const StyledContainer = styled.div`
   min-height: 100vh;
-  background: #fbf8fd;
+  background: #f6e9ff;
 `
 
 export default App

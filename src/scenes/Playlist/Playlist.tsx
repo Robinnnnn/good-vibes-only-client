@@ -3,13 +3,11 @@ import { RouteComponentProps } from '@reach/router'
 import { useAuthActions } from '../../contexts/Auth'
 import useSWR from 'swr'
 import styled from '@emotion/styled'
-import AlbumCover from './AlbumCover'
 import clamp from 'lodash.clamp'
 import swap from 'lodash-move'
 import { useGesture } from 'react-use-gesture'
 import { useSprings, animated, interpolate } from 'react-spring'
-import TrackInfo from './TrackInfo'
-import { keyframes } from '@emotion/core'
+import Track from './Track'
 
 const height = 108
 
@@ -74,12 +72,12 @@ const Playlist: React.FC<RouteComponentProps> = ({ id }) => {
               justifyContent: 'center',
               alignItems: 'center',
             }}
-            // children={tracks[i].track.id}
             children={
-              <Track position={i} className='track' key={covers[i][0].url}>
-                <AlbumCover index={i} imgUrl={covers[i][0].url} />
-                <TrackInfo position={i} data={tracks[i].track} />
-              </Track>
+              <Track
+                key={tracks[i].track.id}
+                position={i}
+                data={tracks[i].track}
+              />
             }
           />
         ))}
@@ -96,36 +94,6 @@ const PlaylistContainer = styled.div`
 const Tracks = styled.div`
   display: flex;
   flex-direction: column;
-  /* flex-wrap: wrap; */
-`
-
-const fadein = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`
-
-const Track = styled.div<{ position: number }>`
-  position: absolute;
-  width: 500px;
-
-  /* background: white; */
-
-  display: flex;
-  justify-content: left;
-  align-items: center;
-
-  margin: 10px;
-  cursor: pointer;
-  user-select: none;
-
-  opacity: 0;
-  animation: ${fadein} 1200ms;
-  animation-delay: ${({ position }) => `${position * 100}ms`};
-  animation-fill-mode: forwards;
 `
 
 export default Playlist

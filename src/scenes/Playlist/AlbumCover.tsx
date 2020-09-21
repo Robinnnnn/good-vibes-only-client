@@ -1,15 +1,24 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { keyframes } from '@emotion/core'
+import { jsx, css, keyframes } from '@emotion/core'
 
-const AlbumCover = ({ imgUrl, index }) => {
+const base = css`
+  color: hotpink;
+`
+
+type Props = {
+  imgUrl: string
+  position: number
+}
+
+const AlbumCover: React.FC<Props> = ({ imgUrl, position }) => {
   // maybe in the future...
   //   const [degreesRotated, setDegreesRotated] = React.useState(0)
   //   const [hovering, setHovering] = React.useState(false)
 
   return (
-    <Wrapper>
-      <CoverContainer className='container' position={index}>
+    <Wrapper isHovering>
+      <CoverContainer className='container' position={position}>
         {/* scales slightly up to reduce width of border */}
         <CoverScaleWrapper className='pic-scale-wrapper'>
           <Cover className='pic' src={imgUrl} />
@@ -27,9 +36,11 @@ const Wrapper = styled.div`
 
   transition: transform 0.2s cubic-bezier(0.14, 0.97, 1, 1);
 
-  &:hover {
+  ${({ isHovering }) =>
+    isHovering &&
+    `&:hover {
     transform: scale(1.2);
-  }
+  }`}
 
   &:hover .pic-scale-wrapper {
     transform: scale(1.05);

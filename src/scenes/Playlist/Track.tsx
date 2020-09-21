@@ -10,9 +10,23 @@ type Props = {
 }
 
 const Track: React.FC<Props> = ({ position, data }) => {
+  const [hoverEnabled, setHoverEnabled] = React.useState(false)
+
+  const enableHover = React.useCallback(() => setHoverEnabled(true), [])
+  const disableHover = React.useCallback(() => setHoverEnabled(false), [])
+
   return (
-    <TrackContainer position={position} className='track'>
-      <AlbumCover position={position} imgUrl={data.album.images[0].url} />
+    <TrackContainer
+      position={position}
+      className='track'
+      onMouseOver={enableHover}
+      onMouseLeave={disableHover}
+    >
+      <AlbumCover
+        position={position}
+        imgUrl={data.album.images[0].url}
+        hoverEnabled={hoverEnabled}
+      />
       <TrackInfo position={position} data={data} />
     </TrackContainer>
   )
@@ -30,8 +44,6 @@ const fadein = keyframes`
 const TrackContainer = styled.div<{ position: number }>`
   position: absolute;
   width: 500px;
-
-  /* background: white; */
 
   display: flex;
   justify-content: left;

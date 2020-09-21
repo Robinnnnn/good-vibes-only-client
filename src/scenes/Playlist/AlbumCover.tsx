@@ -1,23 +1,16 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { jsx, css, keyframes } from '@emotion/core'
-
-const base = css`
-  color: hotpink;
-`
+import { css, keyframes } from '@emotion/core'
 
 type Props = {
-  imgUrl: string
   position: number
+  imgUrl: string
+  hoverEnabled: boolean
 }
 
-const AlbumCover: React.FC<Props> = ({ imgUrl, position }) => {
-  // maybe in the future...
-  //   const [degreesRotated, setDegreesRotated] = React.useState(0)
-  //   const [hovering, setHovering] = React.useState(false)
-
+const AlbumCover: React.FC<Props> = ({ position, imgUrl, hoverEnabled }) => {
   return (
-    <Wrapper isHovering>
+    <Wrapper hoverEnabled={hoverEnabled}>
       <CoverContainer className='container' position={position}>
         {/* scales slightly up to reduce width of border */}
         <CoverScaleWrapper className='pic-scale-wrapper'>
@@ -29,22 +22,40 @@ const AlbumCover: React.FC<Props> = ({ imgUrl, position }) => {
   )
 }
 
-const Wrapper = styled.div`
+const spin = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`
+
+const Wrapper = styled.div<{ hoverEnabled: boolean }>`
   width: 88px;
   height: 88px;
   transform: scale(1);
 
   transition: transform 0.2s cubic-bezier(0.14, 0.97, 1, 1);
 
-  ${({ isHovering }) =>
-    isHovering &&
-    `&:hover {
-    transform: scale(1.2);
-  }`}
+  ${({ hoverEnabled }) =>
+    hoverEnabled &&
+    css`
+      transform: scale(1.2);
 
-  &:hover .pic-scale-wrapper {
-    transform: scale(1.05);
-  }
+      .pic-scale-wrapper {
+        transform: scale(1.05);
+      }
+
+      .pic {
+        animation: ${spin} 10s linear infinite;
+        filter: brightness(100%);
+      }
+
+      .hole {
+        transform: scale(1);
+      }
+    `}
 
   &:active {
     transform: scale(1);
@@ -77,15 +88,6 @@ const fadein = keyframes`
   }
 `
 
-const spin = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`
-
 const CoverContainer = styled.div<{ position: number }>`
   position: relative;
   border-radius: 100%;
@@ -113,15 +115,6 @@ box-shadow:  12px 12px 24px #d1d1d1,
  /* background: #303030;
 box-shadow:  14px 14px 26px #131313, 
              -14px -14px 26px #4d4d4d; */
-
-  &:hover .pic {
-    animation: ${spin} 10s linear infinite;
-    filter: brightness(100%);
-  }
-
-  &:hover .hole {
-    transform: scale(1);
-  }
 }`
 
 const Cover = styled.img`

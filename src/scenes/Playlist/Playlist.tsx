@@ -15,7 +15,7 @@ const fn = (order, down, originalIndex, curIndex, y) => (index) =>
   down && index === originalIndex
     ? {
         y: curIndex * height + y,
-        scale: 1.3,
+        scale: 0.9,
         zIndex: '1',
         // shadow: 15,
         immediate: (n) => n === 'y' || n === 'zIndex',

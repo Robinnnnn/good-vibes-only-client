@@ -3,6 +3,7 @@ import { keyframes } from '@emotion/core'
 import styled from '@emotion/styled'
 import AlbumCover from './AlbumCover'
 import TrackInfo from './TrackInfo'
+import { useAnimatedProgress } from './AnimatedText'
 
 type Props = {
   position: number
@@ -10,24 +11,37 @@ type Props = {
 }
 
 const Track: React.FC<Props> = ({ position, data }) => {
-  const [hoverEnabled, setHoverEnabled] = React.useState(false)
+  // const { data } = useSWR(['getPlaylist', id])
 
+  const [hoverEnabled, setHoverEnabled] = React.useState(false)
   const enableHover = React.useCallback(() => setHoverEnabled(true), [])
   const disableHover = React.useCallback(() => setHoverEnabled(false), [])
+
+  const { progress, animateText, deanimateText } = useAnimatedProgress()
+
+  const handleMouseOver = React.useCallback(() => {
+    enableHover()
+    animateText()
+  }, [enableHover, animateText])
+
+  const handleMouseLeave = React.useCallback(() => {
+    disableHover()
+    deanimateText()
+  }, [disableHover, deanimateText])
 
   return (
     <TrackContainer
       position={position}
       className='track'
-      onMouseOver={enableHover}
-      onMouseLeave={disableHover}
+      onMouseOver={handleMouseOver}
+      onMouseLeave={handleMouseLeave}
     >
       <AlbumCover
         position={position}
         imgUrl={data.album.images[0].url}
         hoverEnabled={hoverEnabled}
       />
-      <TrackInfo position={position} data={data} />
+      <TrackInfo position={position} data={data} progress={progress} />
     </TrackContainer>
   )
 }

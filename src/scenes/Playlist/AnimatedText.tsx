@@ -57,21 +57,36 @@ type Props = {
 }
 
 const AnimatedText: React.FC<Props> = ({ text, progress }) => {
+  /**
+   * This is probably one of the hackiest things I've ever had to do.
+   *
+   * In order to properly animate the linear gradient, the background
+   * color is set on the parent, while the element itself is set to be
+   * invisible. The child inherits the background and is set to visible.
+   *
+   * This is because the `animated.div` component from react-spring does
+   * not properly process the `WebkitBackgroundClip` property when set
+   * using the `style` attribute. I've tried various permutations and
+   * I'm pretty sure it's just unsupported by the library.
+   */
   const animatedParentStyles = React.useMemo(() => {
     return {
-      background: progress.interpolate(interp),
-      WebkitTextFillColor: 'transparent',
       // fixes weird TS complaint: https://github.com/microsoft/TypeScript/issues/11465#issuecomment-252453037
       visibility: 'hidden' as 'hidden',
+      // animated background
+      background: progress.interpolate(interp),
+      // even though the div should technically be invisible, the text
+      // appears black without this property
+      WebkitTextFillColor: 'transparent',
     }
   }, [progress])
 
   const animatedChildStyles = React.useMemo(() => {
     return {
-      background: 'inherit',
-      WebkitBackgroundClip: 'text',
       // fixes weird TS complaint: https://github.com/microsoft/TypeScript/issues/11465#issuecomment-252453037
       visibility: 'visible' as 'visible',
+      background: 'inherit',
+      WebkitBackgroundClip: 'text',
     }
   }, [])
 

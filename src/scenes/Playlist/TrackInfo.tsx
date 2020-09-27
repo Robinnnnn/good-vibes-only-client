@@ -26,16 +26,21 @@ const TrackInfo: React.FC<Props> = ({ position, data, progress }) => {
 const reveal = keyframes`
   from {
     height: 0px;
+    opacity: 0;
   }
   to {
     height: 21px;
+    opacity: 1;
   }
 `
 
 const TitleContainer = styled.div<{ position: number }>`
   text-transform: lowercase;
   font-weight: 800;
+
+  /* initial animation state */
   height: 0px;
+  opacity: 0;
 
   animation: ${reveal} 400ms;
   animation-delay: ${({ position }) => `${500 + position * 100}ms`};

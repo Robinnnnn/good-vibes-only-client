@@ -8,11 +8,10 @@ import { useAnimatedProgress } from './AnimatedText'
 type Props = {
   position: number
   data: any
+  isSelected: boolean
 }
 
-const Track: React.FC<Props> = ({ position, data }) => {
-  // const { data } = useSWR(['getPlaylist', id])
-
+const Track: React.FC<Props> = ({ position, data, isSelected }) => {
   const [hoverEnabled, setHoverEnabled] = React.useState(false)
   const enableHover = React.useCallback(() => setHoverEnabled(true), [])
   const disableHover = React.useCallback(() => setHoverEnabled(false), [])
@@ -40,6 +39,7 @@ const Track: React.FC<Props> = ({ position, data }) => {
         position={position}
         imgUrl={data.album.images[0].url}
         hoverEnabled={hoverEnabled}
+        isSelected={isSelected}
       />
       <TrackInfo position={position} data={data} progress={progress} />
     </TrackContainer>
@@ -63,7 +63,8 @@ const TrackContainer = styled.div<{ position: number }>`
   justify-content: left;
   align-items: center;
 
-  margin: 10px;
+  height: 128px;
+
   cursor: pointer;
   user-select: none;
 

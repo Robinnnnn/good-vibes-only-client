@@ -6,11 +6,17 @@ type Props = {
   position: number
   imgUrl: string
   hoverEnabled: boolean
+  isSelected: boolean
 }
 
-const AlbumCover: React.FC<Props> = ({ position, imgUrl, hoverEnabled }) => {
+const AlbumCover: React.FC<Props> = ({
+  position,
+  imgUrl,
+  hoverEnabled,
+  isSelected,
+}) => {
   return (
-    <Wrapper hoverEnabled={hoverEnabled}>
+    <Wrapper hoverEnabled={hoverEnabled} isSelected={isSelected}>
       <CoverContainer className='container' position={position}>
         {/* scales slightly up to reduce width of border */}
         <CoverScaleWrapper className='pic-scale-wrapper'>
@@ -31,39 +37,52 @@ const spin = keyframes`
   }
 `
 
-const Wrapper = styled.div<{ hoverEnabled: boolean }>`
+const Wrapper = styled.div<{ hoverEnabled: boolean; isSelected: boolean }>`
   width: 88px;
   height: 88px;
   transform: scale(1);
 
   transition: transform 0.2s cubic-bezier(0.14, 0.97, 1, 1);
 
-  ${({ hoverEnabled }) =>
-    hoverEnabled &&
-    css`
-      transform: scale(1.2);
+  ${({ hoverEnabled, isSelected }) => {
+    if (isSelected) {
+      return css`
+        transform: scale(1.25);
 
-      .pic-scale-wrapper {
-        transform: scale(1.05);
-      }
+        .pic-scale-wrapper {
+          transform: scale(1.05);
+        }
 
-      .pic {
-        animation: ${spin} 10s linear infinite;
-        filter: brightness(100%);
-      }
+        .pic {
+          animation: ${spin} 8s linear infinite;
+          filter: brightness(100%);
+        }
 
-      .hole {
-        transform: scale(1);
-      }
-    `}
+        .hole {
+          transform: scale(1);
+        }
+      `
+    }
 
-  &:active {
-    transform: scale(1);
-  }
+    if (hoverEnabled) {
+      return css`
+        transform: scale(1.1);
 
-  &:active .pic {
-    transform: scale(1);
-  }
+        .pic-scale-wrapper {
+          transform: scale(1.05);
+        }
+
+        .pic {
+          animation: ${spin} 10s linear infinite;
+          filter: brightness(100%);
+        }
+
+        .hole {
+          transform: scale(1);
+        }
+      `
+    }
+  }}
 `
 
 const CoverScaleWrapper = styled.div`

@@ -1,6 +1,6 @@
 import React from 'react'
 import SpotifySDK from 'spotify-web-api-js'
-import log, { FLAVORS } from '../../util/log'
+import log, { FLAVORS } from '../../../util/log'
 import { initializeSpotifySDK } from './spotifySDK'
 import { initializeWebPlaybackSDK } from './webPlaybackSDK'
 import {
@@ -8,7 +8,7 @@ import {
   InitializedSpotifySDK,
   InitWebPlaybackSDKParams,
   InitializedPlaybackSDK,
-} from './types'
+} from '../types'
 
 type SpotifyState = {
   // main spotify SDK for basically all requests

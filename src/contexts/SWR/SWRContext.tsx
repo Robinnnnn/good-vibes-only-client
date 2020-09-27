@@ -1,6 +1,6 @@
 import React from 'react'
 import { SWRConfig } from 'swr'
-import { useSpotifyState } from '../Spotify'
+import { useSpotifyState } from '../Spotify/ConfigContext/ConfigContext'
 import log from '../../util/log'
 import SpotifyWebApi from 'spotify-web-api-js'
 

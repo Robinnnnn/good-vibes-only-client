@@ -1,7 +1,7 @@
 import SpotifySDK from 'spotify-web-api-js'
-import log, { FLAVORS } from '../../util/log'
+import log, { FLAVORS } from '../../../util/log'
 import { refreshAndCacheAccessToken } from './refreshToken'
-import { InitSpotifySDKParams, InitializedSpotifySDK } from './types'
+import { InitSpotifySDKParams, InitializedSpotifySDK } from '../types'
 
 // Initialize Spotify SDK. This is the app's primary mode of interacting with
 // Spotify after the user has been identified. Note that requests will be made

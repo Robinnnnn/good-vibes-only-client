@@ -1,6 +1,6 @@
-import log, { FLAVORS } from '../../util/log'
+import log, { FLAVORS } from '../../../util/log'
 import { refreshAndCacheAccessToken } from './refreshToken'
-import { InitWebPlaybackSDKParams, InitializedPlaybackSDK } from './types'
+import { InitWebPlaybackSDKParams, InitializedPlaybackSDK } from '../types'
 
 // We need this one for actually playing music out of the user's browser.
 // It also registers the browser window as a connected device.

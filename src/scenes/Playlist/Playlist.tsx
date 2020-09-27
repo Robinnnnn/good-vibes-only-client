@@ -1,6 +1,6 @@
 import React from 'react'
 import { RouteComponentProps } from '@reach/router'
-import { useAuthActions } from '../../contexts/Auth'
+import { useAuthActions } from '../../contexts/Auth/AuthContext'
 import useSWR from 'swr'
 import styled from '@emotion/styled'
 import AnimatedDraggableList from './AnimatedDraggableList'

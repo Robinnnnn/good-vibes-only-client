@@ -1,8 +1,8 @@
 import React from 'react'
 import Routes from './scenes'
-import { SpotifyProvider } from './contexts/Spotify'
-import { AuthProvider } from './contexts/Auth'
-import { ErrorProvider } from './contexts/Error'
+import { SpotifyProvider } from './contexts/Spotify/ConfigContext/ConfigContext'
+import { AuthProvider } from './contexts/Auth/AuthContext'
+import { ErrorProvider } from './contexts/Error/ErrorContext'
 import styled from '@emotion/styled'
 
 const App: React.FC = () => (

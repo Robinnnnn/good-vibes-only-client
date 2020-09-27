@@ -4,14 +4,16 @@ import styled from '@emotion/styled'
 import AlbumCover from './AlbumCover'
 import TrackInfo from './TrackInfo'
 import { useAnimatedProgress } from './AnimatedText'
+import { useIsSelectedTrack } from '../../contexts/Spotify/PlaybackContext/PlaybackContext'
 
 type Props = {
   position: number
-  data: any
-  isSelected: boolean
+  data: any // TODO: spotify track
 }
 
-const Track: React.FC<Props> = ({ position, data, isSelected }) => {
+const Track: React.FC<Props> = ({ position, data }) => {
+  const isSelected = useIsSelectedTrack({ id: data.id })
+
   const [hoverEnabled, setHoverEnabled] = React.useState(false)
   const enableHover = React.useCallback(() => setHoverEnabled(true), [])
   const disableHover = React.useCallback(() => setHoverEnabled(false), [])

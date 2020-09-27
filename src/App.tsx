@@ -1,5 +1,5 @@
 import React from 'react'
-import Routes from './scenes'
+import Routes from './scenes/Routes'
 import { SpotifyProvider } from './contexts/Spotify/ConfigContext/ConfigContext'
 import { AuthProvider } from './contexts/Auth/AuthContext'
 import { ErrorProvider } from './contexts/Error/ErrorContext'

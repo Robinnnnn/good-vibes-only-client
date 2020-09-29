@@ -71,6 +71,8 @@ export const PlaybackProvider: React.FC = ({ children }) => {
   const contextUri = context?.uri
   const playTrack = React.useCallback(
     (track: SpotifyApi.TrackObjectFull) => {
+      // TODO: handle RESUME
+
       const playOptions = {
         // playlist URI
         context_uri: contextUri,
@@ -85,18 +87,33 @@ export const PlaybackProvider: React.FC = ({ children }) => {
     [contextUri, sdk]
   )
 
+  console.log({
+    server: serverSelectedTrack.name,
+    ui: selectedTrack.name,
+    optimisticUpdateInProgress,
+  })
+
   /**
    * Handles race condition where cached server data is outdated
    * compared to what user clicked
    */
   // TODO: playing a track from a blank slate is still broken!
   React.useEffect(() => {
+    // if server and UI are out of sync
     if (serverSelectedTrack?.id !== selectedTrackId) {
       // UI change; ignore server and exit early
       if (optimisticUpdateInProgress) return
       // Server change; apply to UI
       setSelectedTrack(serverSelectedTrack)
       setOptimisticUpdateInProgress(false)
+    }
+
+    // if server and UI are in sync
+    if (serverSelectedTrack?.id === selectedTrackId) {
+      // reset optimistic update state for next action
+      if (optimisticUpdateInProgress) {
+        setOptimisticUpdateInProgress(false)
+      }
     }
   }, [serverSelectedTrack, optimisticUpdateInProgress, selectedTrackId])
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { RouteComponentProps } from '@reach/router'
 import { useAuthActions } from '../../contexts/Auth/AuthContext'
-import useSWR from 'swr'
+import useSWR, { mutate } from 'swr'
 import styled from '@emotion/styled'
 import AnimatedDraggableList from './AnimatedDraggableList'
 import Track from './Track'
@@ -22,9 +22,7 @@ const useMemoizedTrackList = (items) => {
 const Playlist: React.FC<RouteComponentProps> = ({ id }) => {
   const { logout } = useAuthActions()
 
-  const props = React.useMemo(() => ['getPlaylist', id], [id])
-
-  const { data } = useSWR(props)
+  const { data } = useSWR(['getPlaylist', id])
 
   const tracks = useMemoizedTrackList(data.tracks.items.slice(0, 5))
   // const tracks = data.tracks.items

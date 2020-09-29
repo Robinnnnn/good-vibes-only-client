@@ -91,6 +91,7 @@ const AnimatedDraggableList = ({
     <>
       {springs.map(({ zIndex, y, scale }, index) => (
         <animated.div
+          key={index}
           {...bind(index)}
           style={{
             // @ts-expect-error

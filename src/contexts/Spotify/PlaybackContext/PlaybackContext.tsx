@@ -7,21 +7,32 @@ type PlaybackState = {
   selectedTrack: any // TODO: spotify track
 }
 
-const PlaybackContext = React.createContext<PlaybackState | undefined>(
+const PlaybackStateContext = React.createContext<PlaybackState | undefined>(
   undefined
 )
 
 export const usePlaybackState = (): PlaybackState => {
-  const context = React.useContext(PlaybackContext)
+  const context = React.useContext(PlaybackStateContext)
   if (!context) {
     throw Error('Attempted to use SpotifyState without a provider!')
   }
   return context
 }
 
-export const useIsSelectedTrack = ({ id }) => {
-  const { selectedTrack } = usePlaybackState()
-  return React.useMemo(() => selectedTrack.id === id, [selectedTrack, id])
+type PlaybackActions = {
+  isSelectedTrack: (id: string) => boolean
+}
+
+const PlaybackActionsContext = React.createContext<PlaybackActions | undefined>(
+  undefined
+)
+
+export const usePlaybackActions = (): PlaybackActions => {
+  const context = React.useContext(PlaybackActionsContext)
+  if (!context) {
+    throw Error('Attempted to use SpotifyActions without a provider!')
+  }
+  return context
 }
 
 export const PlaybackProvider: React.FC = ({ children }) => {
@@ -33,13 +44,27 @@ export const PlaybackProvider: React.FC = ({ children }) => {
     is_playing: isPlaying,
     progress_ms: progressMs,
     item: selectedTrack,
+    context,
   } = playback
 
-  const state = { isPlaying, progressMs, selectedTrack }
+  const state = { isPlaying, progressMs, selectedTrack, context }
+
+  const isSelectedTrack = React.useCallback(
+    (id: string) => {
+      return selectedTrack.id === id
+    },
+    [selectedTrack.id]
+  )
+
+  const actions: PlaybackActions = React.useMemo(() => ({ isSelectedTrack }), [
+    isSelectedTrack,
+  ])
 
   return (
-    <PlaybackContext.Provider value={state}>
-      {children}
-    </PlaybackContext.Provider>
+    <PlaybackStateContext.Provider value={state}>
+      <PlaybackActionsContext.Provider value={actions}>
+        {children}
+      </PlaybackActionsContext.Provider>
+    </PlaybackStateContext.Provider>
   )
 }

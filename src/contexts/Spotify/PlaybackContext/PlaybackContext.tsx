@@ -5,7 +5,7 @@ import { useSpotifyState } from '../ConfigContext/ConfigContext'
 type PlaybackState = {
   isPlaying: boolean
   progressMs: number
-  selectedTrack: SpotifyApi.TrackObjectFull // TODO: spotify track
+  selectedTrack?: SpotifyApi.TrackObjectFull // TODO: spotify track
   context: SpotifyApi.CurrentlyPlayingObject // TODO: playback context
 }
 
@@ -62,16 +62,18 @@ export const PlaybackProvider: React.FC = ({ children }) => {
 
   const state = { isPlaying, progressMs, selectedTrack, context }
 
+  const selectedTrackId = selectedTrack?.id
   const isSelectedTrack = React.useCallback(
-    (id: string) => selectedTrack.id === id,
-    [selectedTrack.id]
+    (id: string) => selectedTrackId === id,
+    [selectedTrackId]
   )
 
+  const contextUri = context?.uri
   const playTrack = React.useCallback(
     (track: SpotifyApi.TrackObjectFull) => {
       const playOptions = {
         // playlist URI
-        context_uri: context.uri,
+        context_uri: contextUri,
         // track URI
         offset: { uri: track.uri },
       }
@@ -80,32 +82,23 @@ export const PlaybackProvider: React.FC = ({ children }) => {
       setSelectedTrack(track)
       setOptimisticUpdateInProgress(true)
     },
-    [sdk, context.uri]
+    [contextUri, sdk]
   )
 
-  // TODOOOOOOOO
+  /**
+   * Handles race condition where cached server data is outdated
+   * compared to what user clicked
+   */
+  // TODO: playing a track from a blank slate is still broken!
   React.useEffect(() => {
-    // Handles race condition where cached server data is outdated
-    // compared to what user clicked
-    console.log(
-      'server',
-      serverSelectedTrack.name,
-      'client',
-      selectedTrack.name,
-      'optimisticUpdateInProgress',
-      optimisticUpdateInProgress
-    )
-    if (
-      optimisticUpdateInProgress &&
-      serverSelectedTrack.id !== selectedTrack.id
-    )
-      return
-
-    if (serverSelectedTrack.id !== selectedTrack.id) {
+    if (serverSelectedTrack?.id !== selectedTrackId) {
+      // UI change; ignore server and exit early
+      if (optimisticUpdateInProgress) return
+      // Server change; apply to UI
       setSelectedTrack(serverSelectedTrack)
       setOptimisticUpdateInProgress(false)
     }
-  }, [serverSelectedTrack, optimisticUpdateInProgress, selectedTrack])
+  }, [serverSelectedTrack, optimisticUpdateInProgress, selectedTrackId])
 
   const actions: PlaybackActions = React.useMemo(
     () => ({ isSelectedTrack, playTrack }),

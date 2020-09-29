@@ -149,8 +149,8 @@ const Cover = styled.img`
 const Hole = styled.div`
   position: absolute;
   background: white;
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
   border-radius: 100%;
 
   transition: transform 0.2s ease-in;

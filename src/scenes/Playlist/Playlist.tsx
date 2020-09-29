@@ -6,17 +6,19 @@ import styled from '@emotion/styled'
 import AnimatedDraggableList from './AnimatedDraggableList'
 import Track from './Track'
 
+const TRACKS_TO_DISPLAY = 50
+
 const useMemoizedTrackList = (items) => {
   const hash = React.useMemo(
     () =>
       items
-        .slice(0, 5)
+        .slice(0, TRACKS_TO_DISPLAY)
         .map((item) => item.track.id)
         .join('-'),
     [items]
   )
 
-  return React.useMemo(() => items.slice(0, 5), [hash])
+  return React.useMemo(() => items.slice(0, TRACKS_TO_DISPLAY), [hash])
 }
 
 const Playlist: React.FC<RouteComponentProps> = ({ id }) => {
@@ -24,7 +26,9 @@ const Playlist: React.FC<RouteComponentProps> = ({ id }) => {
 
   const { data } = useSWR(['getPlaylist', id])
 
-  const tracks = useMemoizedTrackList(data.tracks.items.slice(0, 5))
+  const tracks = useMemoizedTrackList(
+    data.tracks.items.slice(0, TRACKS_TO_DISPLAY)
+  )
   // const tracks = data.tracks.items
 
   const TrackRow = React.useCallback(

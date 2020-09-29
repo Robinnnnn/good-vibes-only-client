@@ -55,8 +55,7 @@ const AnimatedDraggableList = ({
   numItems,
   ChildComponent,
 }: AnimatedDraggableProps) => {
-  // const items = React.useMemo(() => new Array(numItems), [numItems])
-  const items = React.useMemo(() => [1, 2, 3, 4, 5], [])
+  const items = React.useMemo(() => [...Array(numItems).keys()], [numItems])
   // Store indicies as a local ref, this represents the item order
   const trackOrder = React.useRef(items.map((_, index) => index))
   // Create springs, each corresponds to an item, controlling its transform, scale, etc.

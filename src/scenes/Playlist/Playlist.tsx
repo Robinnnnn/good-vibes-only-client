@@ -1,10 +1,11 @@
 import React from 'react'
 import { RouteComponentProps } from '@reach/router'
 import { useAuthActions } from '../../contexts/Auth/AuthContext'
-import useSWR, { mutate } from 'swr'
+import useSWR from 'swr'
 import styled from '@emotion/styled'
 import AnimatedDraggableList from './AnimatedDraggableList'
 import Track from './Track'
+import { PlaybackProvider } from '../../contexts/Spotify/PlaybackContext/PlaybackContext'
 
 const TRACKS_TO_DISPLAY = 50
 
@@ -18,13 +19,18 @@ const useMemoizedTrackList = (items) => {
     [items]
   )
 
+  // only update playlist array if track composition changes;
+  // otherwise, we'll have a LOT of state updates as we poll
+  // for the latest state
+  //
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return React.useMemo(() => items.slice(0, TRACKS_TO_DISPLAY), [hash])
 }
 
-const Playlist: React.FC<RouteComponentProps> = ({ id }) => {
+const Playlist: React.FC<RouteComponentProps> = ({ id: playlistId }) => {
   const { logout } = useAuthActions()
 
-  const { data } = useSWR(['getPlaylist', id])
+  const { data } = useSWR(['getPlaylist', playlistId])
 
   const tracks = useMemoizedTrackList(
     data.tracks.items.slice(0, TRACKS_TO_DISPLAY)
@@ -43,15 +49,17 @@ const Playlist: React.FC<RouteComponentProps> = ({ id }) => {
   )
 
   return (
-    <PlaylistContainer>
-      <Tracks>
-        <AnimatedDraggableList
-          numItems={tracks.length}
-          ChildComponent={TrackRow}
-        />
-      </Tracks>
-      {/* <button onClick={logout}>logout</button> */}
-    </PlaylistContainer>
+    <PlaybackProvider playlistUri={data.uri}>
+      <PlaylistContainer>
+        <Tracks>
+          <AnimatedDraggableList
+            numItems={tracks.length}
+            ChildComponent={TrackRow}
+          />
+        </Tracks>
+        {/* <button onClick={logout}>logout</button> */}
+      </PlaylistContainer>
+    </PlaybackProvider>
   )
 }
 

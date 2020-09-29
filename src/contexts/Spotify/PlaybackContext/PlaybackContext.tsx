@@ -38,7 +38,14 @@ export const usePlaybackActions = (): PlaybackActions => {
   return context
 }
 
-export const PlaybackProvider: React.FC = ({ children }) => {
+type Props = {
+  playlistUri: string
+}
+
+export const PlaybackProvider: React.FC<Props> = ({
+  playlistUri,
+  children,
+}) => {
   const { sdk } = useSpotifyState()
 
   const { data: playback } = useSWR('getMyCurrentPlaybackState', {
@@ -62,13 +69,18 @@ export const PlaybackProvider: React.FC = ({ children }) => {
 
   const state = { isPlaying, progressMs, selectedTrack, context }
 
-  const selectedTrackId = selectedTrack?.id
+  const selectedTrackId = React.useMemo(() => selectedTrack?.id, [
+    selectedTrack,
+  ])
   const isSelectedTrack = React.useCallback(
     (id: string) => selectedTrackId === id,
     [selectedTrackId]
   )
 
-  const contextUri = context?.uri
+  const contextUri = React.useMemo(() => context?.uri || playlistUri, [
+    context,
+    playlistUri,
+  ])
   const playTrack = React.useCallback(
     (track: SpotifyApi.TrackObjectFull) => {
       // TODO: handle RESUME
@@ -79,6 +91,7 @@ export const PlaybackProvider: React.FC = ({ children }) => {
         // track URI
         offset: { uri: track.uri },
       }
+      console.log({ playOptions })
       sdk.play(playOptions)
       console.log('immediately setting track', track.name)
       setSelectedTrack(track)
@@ -88,8 +101,8 @@ export const PlaybackProvider: React.FC = ({ children }) => {
   )
 
   console.log({
-    server: serverSelectedTrack.name,
-    ui: selectedTrack.name,
+    server: serverSelectedTrack?.name,
+    ui: selectedTrack?.name,
     optimisticUpdateInProgress,
   })
 

@@ -4,7 +4,10 @@ import styled from '@emotion/styled'
 import AlbumCover from './AlbumCover'
 import TrackInfo from './TrackInfo'
 import { useAnimatedProgress } from './AnimatedText'
-import { usePlaybackActions } from '../../contexts/Spotify/PlaybackContext/PlaybackContext'
+import {
+  usePlaybackActions,
+  usePlaybackState,
+} from '../../contexts/Spotify/PlaybackContext/PlaybackContext'
 import { useSpotifyState } from '../../contexts/Spotify/ConfigContext/ConfigContext'
 
 type Props = {
@@ -12,9 +15,9 @@ type Props = {
   data: any // TODO: spotify track
 }
 
-const Track: React.FC<Props> = ({ position, data }) => {
-  const { isSelectedTrack } = usePlaybackActions()
-  const isSelected = isSelectedTrack(data.id)
+const Track: React.FC<Props> = ({ position, data: track }) => {
+  const { isSelectedTrack, playTrack } = usePlaybackActions()
+  const isSelected = isSelectedTrack(track.id)
 
   const [hoverEnabled, setHoverEnabled] = React.useState(false)
   const enableHover = React.useCallback(() => setHoverEnabled(true), [])
@@ -33,18 +36,15 @@ const Track: React.FC<Props> = ({ position, data }) => {
   }, [disableHover, deanimateText])
 
   const { sdk } = useSpotifyState()
-
-  const handlePlay = React.useCallback(
-    (trackId: string) => {
-      console.log('PLAYING', trackId)
-      // const playOptions = {
-      //   context_uri: playlistUri,
-      //   offset: { uri: track.uri }
-      // }
-      sdk.play()
-    },
-    [sdk]
-  )
+  const { isPlaying } = usePlaybackState()
+  const thisTrackIsPlaying = isSelected && isPlaying
+  const handlePlay = React.useCallback(() => {
+    if (thisTrackIsPlaying) {
+      sdk.pause()
+      return
+    }
+    playTrack(track)
+  }, [thisTrackIsPlaying, playTrack, track, sdk])
 
   return (
     <TrackContainer
@@ -56,11 +56,11 @@ const Track: React.FC<Props> = ({ position, data }) => {
     >
       <AlbumCover
         position={position}
-        imgUrl={data.album.images[0].url}
+        imgUrl={track.album.images[0].url}
         hoverEnabled={hoverEnabled}
         isSelected={isSelected}
       />
-      <TrackInfo position={position} data={data} progress={progress} />
+      <TrackInfo position={position} data={track} progress={progress} />
     </TrackContainer>
   )
 }

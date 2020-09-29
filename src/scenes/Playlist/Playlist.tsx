@@ -38,8 +38,6 @@ const Playlist: React.FC<RouteComponentProps> = ({ id }) => {
     [tracks]
   )
 
-  console.log('playlist render')
-
   return (
     <PlaylistContainer>
       <Tracks>

@@ -124,20 +124,18 @@ export const PlaybackProvider: React.FC<Props> = ({
         // track URI
         offset: { uri: track.uri },
       }
-      console.log({ playOptions })
       sdk.play(playOptions)
-      console.log('immediately setting track', track.name)
       setSelectedTrack(track)
       setOptimisticUpdateInProgress(true)
     },
     [contextUri, sdk]
   )
 
-  console.log({
-    server: serverSelectedTrack?.name,
-    ui: selectedTrack?.name,
-    optimisticUpdateInProgress,
-  })
+  // console.log({
+  //   server: serverSelectedTrack?.name,
+  //   ui: selectedTrack?.name,
+  //   optimisticUpdateInProgress,
+  // })
 
   /**
    * Handles race condition where cached server data is outdated

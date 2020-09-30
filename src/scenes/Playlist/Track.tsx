@@ -1,5 +1,5 @@
 import React from 'react'
-import { keyframes } from '@emotion/core'
+import { css, keyframes } from '@emotion/core'
 import styled from '@emotion/styled'
 import AlbumCover from './AlbumCover'
 import TrackInfo from './TrackInfo'
@@ -53,6 +53,8 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
       onMouseOver={handleMouseOver}
       onMouseLeave={handleMouseLeave}
       onClick={handlePlay}
+      hoverEnabled={hoverEnabled}
+      isSelected={isSelected}
     >
       <AlbumCover
         position={position}
@@ -74,7 +76,11 @@ const fadein = keyframes`
   }
 `
 
-const TrackContainer = styled.div<{ position: number }>`
+const TrackContainer = styled.div<{
+  position: number
+  hoverEnabled: boolean
+  isSelected: boolean
+}>`
   position: absolute;
   width: 500px;
 
@@ -91,6 +97,21 @@ const TrackContainer = styled.div<{ position: number }>`
   animation: ${fadein} 1200ms;
   animation-delay: ${({ position }) => `${position * 100}ms`};
   animation-fill-mode: forwards;
-`
 
+  transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
+
+  ${({ hoverEnabled, isSelected }) => {
+    if (isSelected) {
+      return css`
+        transform: translateX(70px);
+      `
+    }
+
+    if (hoverEnabled) {
+      return css`
+        transform: translateX(30px);
+      `
+    }
+  }}
+`
 export default Track

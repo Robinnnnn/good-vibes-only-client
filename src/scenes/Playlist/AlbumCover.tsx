@@ -17,13 +17,15 @@ const AlbumCover: React.FC<Props> = ({
 }) => {
   return (
     <Wrapper hoverEnabled={hoverEnabled} isSelected={isSelected}>
-      <CoverContainer className='container' position={position}>
-        {/* scales slightly up to reduce width of border */}
-        <CoverScaleWrapper className='pic-scale-wrapper'>
-          <Cover className='pic' src={imgUrl} />
-        </CoverScaleWrapper>
-        <Hole className='hole' />
-      </CoverContainer>
+      <CoverFlipWrapper className='pic-flip-wrapper'>
+        <CoverContainer className='container' position={position}>
+          {/* scales slightly up to reduce width of border */}
+          <CoverScaleWrapper className='pic-scale-wrapper'>
+            <Cover className='pic' src={imgUrl} />
+          </CoverScaleWrapper>
+          <Hole className='hole' />
+        </CoverContainer>
+      </CoverFlipWrapper>
     </Wrapper>
   )
 }
@@ -42,15 +44,19 @@ const Wrapper = styled.div<{ hoverEnabled: boolean; isSelected: boolean }>`
   height: 88px;
   transform: scale(1);
 
-  transition: transform 0.2s cubic-bezier(0.14, 0.97, 1, 1);
+  transition: transform 0.8s cubic-bezier(0.14, 0.97, 1, 1);
 
   ${({ hoverEnabled, isSelected }) => {
     if (isSelected) {
       return css`
-        transform: scale(1.25);
+        transform: scale(1.55);
+
+        .pic-flip-wrapper {
+          /* transform: rotateX(360deg); */
+        }
 
         .pic-scale-wrapper {
-          transform: scale(1.05);
+          transform: scale(1.03);
         }
 
         .pic {
@@ -66,10 +72,10 @@ const Wrapper = styled.div<{ hoverEnabled: boolean; isSelected: boolean }>`
 
     if (hoverEnabled) {
       return css`
-        transform: scale(1.1);
+        transform: scale(1.25);
 
         .pic-scale-wrapper {
-          transform: scale(1.05);
+          transform: scale(1.03);
         }
 
         .pic {
@@ -83,6 +89,14 @@ const Wrapper = styled.div<{ hoverEnabled: boolean; isSelected: boolean }>`
       `
     }
   }}
+`
+
+const CoverFlipWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
 `
 
 const CoverScaleWrapper = styled.div`

@@ -1,6 +1,7 @@
 import React from 'react'
 import useSWR from 'swr'
 import { useSpotifyState } from '../ConfigContext/ConfigContext'
+import log, { FLAVORS } from '../../../util/log'
 
 type PlaybackState = {
   isPlaying: boolean
@@ -42,15 +43,46 @@ type Props = {
   playlistUri: string
 }
 
+/**
+ * Polls a user's playback status. If none is found (e.g. user doesn't have app open elsewhere),
+ * the useEffect is triggered to use the current browser window as the active playback device.
+ * Specifically, it handles:
+ * - When a user opens the site without having any other apps open
+ * - When a user has both the site + Spotify native app open, and closes the native app
+ */
+const usePlayback = (): SpotifyApi.CurrentlyPlayingObject => {
+  const {
+    sdk,
+    playbackInstance: { device_id: thisDeviceId },
+  } = useSpotifyState()
+
+  const { data: playback } = useSWR('getMyCurrentPlaybackState', {
+    refreshInterval: 2000,
+  })
+
+  const initializePlaybackOnCurrentDevice = React.useCallback(async () => {
+    // https://doxdox.org/jmperez/spotify-web-api-js#src-spotify-web-api.js-constr.prototype.transfermyplayback
+    await sdk.transferMyPlayback([thisDeviceId], { play: false })
+  }, [sdk, thisDeviceId])
+
+  React.useEffect(() => {
+    if (!playback) {
+      log.error(
+        FLAVORS.DEFAULT,
+        'no active device found; initializing your browser window as device'
+      )
+      initializePlaybackOnCurrentDevice()
+    }
+  }, [playback, initializePlaybackOnCurrentDevice])
+
+  return playback
+}
+
 export const PlaybackProvider: React.FC<Props> = ({
   playlistUri,
   children,
 }) => {
-  const { sdk } = useSpotifyState()
-
-  const { data: playback } = useSWR('getMyCurrentPlaybackState', {
-    refreshInterval: 5000,
-  })
+  const playback = usePlayback()
 
   const {
     is_playing: isPlaying,
@@ -77,6 +109,7 @@ export const PlaybackProvider: React.FC<Props> = ({
     [selectedTrackId]
   )
 
+  const { sdk } = useSpotifyState()
   const contextUri = React.useMemo(() => context?.uri || playlistUri, [
     context,
     playlistUri,
@@ -110,7 +143,6 @@ export const PlaybackProvider: React.FC<Props> = ({
    * Handles race condition where cached server data is outdated
    * compared to what user clicked
    */
-  // TODO: playing a track from a blank slate is still broken!
   React.useEffect(() => {
     // if server and UI are out of sync
     if (serverSelectedTrack?.id !== selectedTrackId) {

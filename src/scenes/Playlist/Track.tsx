@@ -1,5 +1,5 @@
 import React from 'react'
-import { css, keyframes } from '@emotion/core'
+import { keyframes } from '@emotion/core'
 import styled from '@emotion/styled'
 import AlbumCover from './AlbumCover'
 import TrackInfo from './TrackInfo'
@@ -53,8 +53,6 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
       onMouseOver={handleMouseOver}
       onMouseLeave={handleMouseLeave}
       onClick={handlePlay}
-      hoverEnabled={hoverEnabled}
-      isSelected={isSelected}
     >
       <AlbumCover
         position={position}
@@ -62,7 +60,13 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
         hoverEnabled={hoverEnabled}
         isSelected={isSelected}
       />
-      <TrackInfo position={position} data={track} progress={progress} />
+      <TrackInfo
+        position={position}
+        data={track}
+        progress={progress}
+        hoverEnabled={hoverEnabled}
+        isSelected={isSelected}
+      />
     </TrackContainer>
   )
 }
@@ -76,11 +80,7 @@ const fadein = keyframes`
   }
 `
 
-const TrackContainer = styled.div<{
-  position: number
-  hoverEnabled: boolean
-  isSelected: boolean
-}>`
+const TrackContainer = styled.div<{ position: number }>`
   position: absolute;
   width: 500px;
 
@@ -99,19 +99,5 @@ const TrackContainer = styled.div<{
   animation-fill-mode: forwards;
 
   transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
-
-  ${({ hoverEnabled, isSelected }) => {
-    if (isSelected) {
-      return css`
-        transform: translateX(70px);
-      `
-    }
-
-    if (hoverEnabled) {
-      return css`
-        transform: translateX(30px);
-      `
-    }
-  }}
 `
 export default Track

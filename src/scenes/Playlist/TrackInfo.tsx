@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { keyframes } from '@emotion/core'
+import { css, keyframes } from '@emotion/core'
 
 import AnimatedText from './AnimatedText'
 import { AnimatedValue } from 'react-spring'
@@ -10,11 +10,19 @@ type Props = {
   position: number
   // @ts-expect-error
   progress: AnimatedValue
+  hoverEnabled: boolean
+  isSelected: boolean
 }
 
-const TrackInfo: React.FC<Props> = ({ position, data, progress }) => {
+const TrackInfo: React.FC<Props> = ({
+  position,
+  data,
+  progress,
+  hoverEnabled,
+  isSelected,
+}) => {
   return (
-    <TrackInfoContainer>
+    <TrackInfoContainer hoverEnabled={hoverEnabled} isSelected={isSelected}>
       <TitleContainer position={position}>
         <AnimatedText text={data.name} progress={progress} />
       </TitleContainer>
@@ -34,6 +42,31 @@ const reveal = keyframes`
   }
 `
 
+const TrackInfoContainer = styled.div<{
+  hoverEnabled: boolean
+  isSelected: boolean
+}>`
+  display: flex;
+  flex-direction: column;
+  transform: translateX(40px);
+
+  transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
+
+  ${({ hoverEnabled, isSelected }) => {
+    if (isSelected) {
+      return css`
+        transform: translateX(160px);
+      `
+    }
+
+    if (hoverEnabled) {
+      return css`
+        transform: translateX(70px);
+      `
+    }
+  }}
+`
+
 const TitleContainer = styled.div<{ position: number }>`
   text-transform: lowercase;
   font-weight: 800;
@@ -45,12 +78,6 @@ const TitleContainer = styled.div<{ position: number }>`
   animation: ${reveal} 400ms;
   animation-delay: ${({ position }) => `${500 + position * 100}ms`};
   animation-fill-mode: forwards;
-`
-
-const TrackInfoContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-left: 40px;
 `
 
 const ArtistContainer = styled.div`

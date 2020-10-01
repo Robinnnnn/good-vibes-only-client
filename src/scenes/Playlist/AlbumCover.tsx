@@ -44,12 +44,12 @@ const Wrapper = styled.div<{ hoverEnabled: boolean; isSelected: boolean }>`
   height: 88px;
   transform: scale(1);
 
-  transition: transform 0.8s cubic-bezier(0.14, 0.97, 1, 1);
+  transition: transform 0.7s cubic-bezier(0.14, 0.97, 1, 1);
 
   ${({ hoverEnabled, isSelected }) => {
     if (isSelected) {
       return css`
-        transform: scale(1.55);
+        transform: scale(1.55) translateX(70px);
 
         .pic-flip-wrapper {
           /* transform: rotateX(360deg); */
@@ -72,7 +72,7 @@ const Wrapper = styled.div<{ hoverEnabled: boolean; isSelected: boolean }>`
 
     if (hoverEnabled) {
       return css`
-        transform: scale(1.25);
+        transform: scale(1.25) translateX(30px);
 
         .pic-scale-wrapper {
           transform: scale(1.03);

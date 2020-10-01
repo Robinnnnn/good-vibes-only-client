@@ -2,6 +2,7 @@ import SpotifySDK from 'spotify-web-api-js'
 import log, { FLAVORS } from '../../../util/log'
 import { refreshAndCacheAccessToken } from './refreshToken'
 import { InitSpotifySDKParams, InitializedSpotifySDK } from '../types'
+import { MINUTE } from '../../../util/time'
 
 // Initialize Spotify SDK. This is the app's primary mode of interacting with
 // Spotify after the user has been identified. Note that requests will be made
@@ -18,7 +19,7 @@ export function initializeSpotifySDK({
   // Set token to refresh periodically; default expiry is 60 mins
   const refreshTokenIntervalId = window.setInterval(
     () => refreshAndCacheAccessToken(refresh_token, sdk),
-    1000 * 30 * 10 // 30 mins
+    30 * MINUTE // 30 mins
   )
   return { sdk, refreshTokenIntervalId }
 }

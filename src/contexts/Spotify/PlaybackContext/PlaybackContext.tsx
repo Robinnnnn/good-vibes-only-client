@@ -2,6 +2,7 @@ import React from 'react'
 import useSWR from 'swr'
 import { useSpotifyState } from '../ConfigContext/ConfigContext'
 import log, { FLAVORS } from '../../../util/log'
+import { SECOND } from '../../../util/time'
 
 type PlaybackState = {
   isPlaying: boolean
@@ -57,7 +58,7 @@ const usePlayback = (): SpotifyApi.CurrentlyPlayingObject => {
   } = useSpotifyState()
 
   const { data: playback } = useSWR('getMyCurrentPlaybackState', {
-    refreshInterval: 30000,
+    refreshInterval: 30 * SECOND,
   })
 
   const initializePlaybackOnCurrentDevice = React.useCallback(async () => {

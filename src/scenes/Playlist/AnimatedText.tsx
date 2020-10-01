@@ -1,5 +1,6 @@
 import React from 'react'
 import { animated, AnimatedValue, useSpring } from 'react-spring'
+import { SECOND } from '../../util/time'
 
 // my playground: https://codesandbox.io/s/color-rotation-73c7f?file=/src/index.js
 
@@ -8,7 +9,7 @@ export const useAnimatedProgress = () => {
   const [{ progress }, set] = useSpring(() => ({
     from: { progress: 0 },
     config: {
-      duration: 2000,
+      duration: 2 * SECOND,
       easing: function easeOutQuart(x: number) {
         return 1 - Math.pow(1 - x, 3)
       },

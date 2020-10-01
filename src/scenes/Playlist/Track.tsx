@@ -21,9 +21,9 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
   const isPlaying = isSelected && activePlayback
   const isPaused = isSelected && !isPlaying
 
-  const [hoverEnabled, setHoverEnabled] = React.useState(false)
-  const enableHover = React.useCallback(() => setHoverEnabled(true), [])
-  const disableHover = React.useCallback(() => setHoverEnabled(false), [])
+  const [isHovering, setIsHovering] = React.useState(false)
+  const enableHover = React.useCallback(() => setIsHovering(true), [])
+  const disableHover = React.useCallback(() => setIsHovering(false), [])
 
   const { progress, animateText, deanimateText } = useAnimatedProgress()
 
@@ -52,7 +52,7 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
       <AlbumCover
         position={position}
         imgUrl={track.album.images[0].url}
-        hoverEnabled={hoverEnabled}
+        isHovering={isHovering}
         isPlaying={isPlaying}
         isPaused={isPaused}
       />
@@ -60,7 +60,7 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
         position={position}
         data={track}
         progress={progress}
-        hoverEnabled={hoverEnabled}
+        isHovering={isHovering}
         isPlaying={isPlaying}
         isPaused={isPaused}
       />

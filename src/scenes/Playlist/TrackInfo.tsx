@@ -10,7 +10,7 @@ type Props = {
   position: number
   // @ts-expect-error
   progress: AnimatedValue
-  hoverEnabled: boolean
+  isHovering: boolean
   isPaused: boolean
   isPlaying: boolean
 }
@@ -19,13 +19,13 @@ const TrackInfo: React.FC<Props> = ({
   position,
   data,
   progress,
-  hoverEnabled,
+  isHovering,
   isPaused,
   isPlaying,
 }) => {
   return (
     <TrackInfoContainer
-      hoverEnabled={hoverEnabled}
+      isHovering={isHovering}
       isPaused={isPaused}
       isPlaying={isPlaying}
     >
@@ -49,7 +49,7 @@ const reveal = keyframes`
 `
 
 const TrackInfoContainer = styled.div<{
-  hoverEnabled: boolean
+  isHovering: boolean
   isPaused: boolean
   isPlaying: boolean
 }>`
@@ -60,7 +60,7 @@ const TrackInfoContainer = styled.div<{
   transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
   opacity: 0.9;
 
-  ${({ hoverEnabled, isPlaying, isPaused }) => {
+  ${({ isHovering, isPlaying, isPaused }) => {
     if (isPlaying) {
       return css`
         transform: translateX(160px);
@@ -74,7 +74,7 @@ const TrackInfoContainer = styled.div<{
       `
     }
 
-    if (hoverEnabled) {
+    if (isHovering) {
       return css`
         transform: translateX(70px);
         opacity: 1;

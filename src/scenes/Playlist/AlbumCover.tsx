@@ -5,7 +5,7 @@ import { css, keyframes } from '@emotion/core'
 type Props = {
   position: number
   imgUrl: string
-  hoverEnabled: boolean
+  isHovering: boolean
   isPlaying: boolean
   isPaused: boolean
 }
@@ -13,16 +13,12 @@ type Props = {
 const AlbumCover: React.FC<Props> = ({
   position,
   imgUrl,
-  hoverEnabled,
+  isHovering,
   isPlaying,
   isPaused,
 }) => {
   return (
-    <Wrapper
-      hoverEnabled={hoverEnabled}
-      isPlaying={isPlaying}
-      isPaused={isPaused}
-    >
+    <Wrapper isHovering={isHovering} isPlaying={isPlaying} isPaused={isPaused}>
       <CoverFlipWrapper className='pic-flip-wrapper'>
         <CoverContainer className='container' position={position}>
           {/* scales slightly up to reduce width of border */}
@@ -46,7 +42,7 @@ const spin = keyframes`
 `
 
 const Wrapper = styled.div<{
-  hoverEnabled: boolean
+  isHovering: boolean
   isPlaying: boolean
   isPaused: boolean
 }>`
@@ -56,7 +52,7 @@ const Wrapper = styled.div<{
 
   transition: transform 0.7s cubic-bezier(0.14, 0.97, 1, 1);
 
-  ${({ hoverEnabled, isPlaying, isPaused }) => {
+  ${({ isHovering, isPlaying, isPaused }) => {
     if (isPlaying) {
       return css`
         transform: scale(1.55) translateX(70px);
@@ -103,7 +99,7 @@ const Wrapper = styled.div<{
       `
     }
 
-    if (hoverEnabled) {
+    if (isHovering) {
       return css`
         transform: scale(1.25) translateX(30px);
 

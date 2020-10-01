@@ -15,8 +15,11 @@ type Props = {
 }
 
 const Track: React.FC<Props> = ({ position, data: track }) => {
+  const { isPlaying: activePlayback } = usePlaybackState()
   const { isSelectedTrack, playPauseTrack } = usePlaybackActions()
   const isSelected = isSelectedTrack(track.id)
+  const isPlaying = isSelected && activePlayback
+  const isPaused = isSelected && !isPlaying
 
   const [hoverEnabled, setHoverEnabled] = React.useState(false)
   const enableHover = React.useCallback(() => setHoverEnabled(true), [])
@@ -34,7 +37,6 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
     deanimateText()
   }, [disableHover, deanimateText])
 
-  const { isPlaying } = usePlaybackState()
   const handlePlayPause = React.useCallback(() => {
     playPauseTrack(track)
   }, [playPauseTrack, track])
@@ -51,14 +53,16 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
         position={position}
         imgUrl={track.album.images[0].url}
         hoverEnabled={hoverEnabled}
-        isSelected={isSelected}
+        isPlaying={isPlaying}
+        isPaused={isPaused}
       />
       <TrackInfo
         position={position}
         data={track}
         progress={progress}
         hoverEnabled={hoverEnabled}
-        isSelected={isSelected}
+        isPlaying={isPlaying}
+        isPaused={isPaused}
       />
     </TrackContainer>
   )

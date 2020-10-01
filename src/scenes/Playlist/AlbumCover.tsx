@@ -6,17 +6,23 @@ type Props = {
   position: number
   imgUrl: string
   hoverEnabled: boolean
-  isSelected: boolean
+  isPlaying: boolean
+  isPaused: boolean
 }
 
 const AlbumCover: React.FC<Props> = ({
   position,
   imgUrl,
   hoverEnabled,
-  isSelected,
+  isPlaying,
+  isPaused,
 }) => {
   return (
-    <Wrapper hoverEnabled={hoverEnabled} isSelected={isSelected}>
+    <Wrapper
+      hoverEnabled={hoverEnabled}
+      isPlaying={isPlaying}
+      isPaused={isPaused}
+    >
       <CoverFlipWrapper className='pic-flip-wrapper'>
         <CoverContainer className='container' position={position}>
           {/* scales slightly up to reduce width of border */}
@@ -39,15 +45,19 @@ const spin = keyframes`
   }
 `
 
-const Wrapper = styled.div<{ hoverEnabled: boolean; isSelected: boolean }>`
+const Wrapper = styled.div<{
+  hoverEnabled: boolean
+  isPlaying: boolean
+  isPaused: boolean
+}>`
   width: 88px;
   height: 88px;
   transform: scale(1);
 
   transition: transform 0.7s cubic-bezier(0.14, 0.97, 1, 1);
 
-  ${({ hoverEnabled, isSelected }) => {
-    if (isSelected) {
+  ${({ hoverEnabled, isPlaying, isPaused }) => {
+    if (isPlaying) {
       return css`
         transform: scale(1.55) translateX(70px);
 
@@ -62,6 +72,29 @@ const Wrapper = styled.div<{ hoverEnabled: boolean; isSelected: boolean }>`
         .pic {
           animation: ${spin} 8s linear infinite;
           filter: brightness(100%);
+        }
+
+        .hole {
+          transform: scale(1);
+        }
+      `
+    }
+
+    if (isPaused) {
+      return css`
+        transform: scale(1.55) translateX(70px);
+
+        .pic-flip-wrapper {
+          /* transform: rotateX(360deg); */
+        }
+
+        .pic-scale-wrapper {
+          transform: scale(1.03);
+        }
+
+        .pic {
+          animation: ${spin} 8s linear infinite;
+          filter: brightness(80%);
         }
 
         .hole {

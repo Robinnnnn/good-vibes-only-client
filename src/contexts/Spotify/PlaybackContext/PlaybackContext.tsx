@@ -8,7 +8,7 @@ type PlaybackState = {
   isPlaying: boolean
   progressMs: number
   selectedTrack?: SpotifyApi.TrackObjectFull
-  context: SpotifyApi.CurrentlyPlayingObject
+  context: SpotifyApi.ContextObject
 }
 
 const PlaybackStateContext = React.createContext<PlaybackState | undefined>(
@@ -86,7 +86,7 @@ export const PlaybackProvider: React.FC<Props> = ({
   const playback = usePlayback()
 
   const {
-    is_playing: isPlaying,
+    is_playing: serverIsPlaying,
     progress_ms: progressMs,
     item: serverSelectedTrack,
     context,
@@ -95,6 +95,7 @@ export const PlaybackProvider: React.FC<Props> = ({
   const [selectedTrack, setSelectedTrack] = React.useState<
     SpotifyApi.TrackObjectFull
   >(serverSelectedTrack)
+  const [isPlaying, setIsPlaying] = React.useState<boolean>(serverIsPlaying)
   const [
     optimisticUpdateInProgress,
     setOptimisticUpdateInProgress,
@@ -117,10 +118,13 @@ export const PlaybackProvider: React.FC<Props> = ({
   ])
   const playPauseTrack = React.useCallback(
     (track: SpotifyApi.TrackObjectFull) => {
+      setOptimisticUpdateInProgress(true)
+
       const trackIsSelected = isSelectedTrack(track.id)
       const shouldPause = trackIsSelected && isPlaying
       if (shouldPause) {
         sdk.pause()
+        setIsPlaying(false)
         return
       }
 
@@ -134,8 +138,8 @@ export const PlaybackProvider: React.FC<Props> = ({
         position_ms: shouldResume ? progressMs : 0,
       }
       sdk.play(playOptions)
+      setIsPlaying(true)
       setSelectedTrack(track)
-      setOptimisticUpdateInProgress(true)
     },
     [contextUri, isPlaying, isSelectedTrack, progressMs, sdk]
   )
@@ -151,23 +155,30 @@ export const PlaybackProvider: React.FC<Props> = ({
    * compared to what user clicked
    */
   React.useEffect(() => {
-    // if server and UI are out of sync
-    if (serverSelectedTrack?.id !== selectedTrackId) {
-      // UI change; ignore server and exit early
-      if (optimisticUpdateInProgress) return
-      // Server change; apply to UI
+    const selectedTrackInSync = serverSelectedTrack?.id === selectedTrackId
+    const playStateInSync = serverIsPlaying !== isPlaying
+    const synced = selectedTrackInSync && playStateInSync
+
+    // UI is source of truth; server will catch up
+    if (optimisticUpdateInProgress && !synced) return
+
+    // Server is source of truth; UI will catch up
+    if (!optimisticUpdateInProgress) {
       setSelectedTrack(serverSelectedTrack)
-      setOptimisticUpdateInProgress(false)
+      setIsPlaying(serverIsPlaying)
     }
 
-    // if server and UI are in sync
-    if (serverSelectedTrack?.id === selectedTrackId) {
-      // reset optimistic update state for next action
-      if (optimisticUpdateInProgress) {
-        setOptimisticUpdateInProgress(false)
-      }
+    // UI and server are on the same page; reset optimistic update flag
+    if (optimisticUpdateInProgress && synced) {
+      setOptimisticUpdateInProgress(false)
     }
-  }, [serverSelectedTrack, optimisticUpdateInProgress, selectedTrackId])
+  }, [
+    serverSelectedTrack,
+    optimisticUpdateInProgress,
+    selectedTrackId,
+    serverIsPlaying,
+    isPlaying,
+  ])
 
   const actions: PlaybackActions = React.useMemo(
     () => ({ isSelectedTrack, playPauseTrack }),

@@ -25,7 +25,7 @@ export const usePlaybackState = (): PlaybackState => {
 
 type PlaybackActions = {
   isSelectedTrack: (id: string) => boolean
-  playTrack: (track: SpotifyApi.TrackObjectFull) => void
+  playPauseTrack: (track: SpotifyApi.TrackObjectFull) => void
 }
 
 const PlaybackActionsContext = React.createContext<PlaybackActions | undefined>(
@@ -58,7 +58,7 @@ const usePlayback = (): SpotifyApi.CurrentlyPlayingObject => {
   } = useSpotifyState()
 
   const { data: playback } = useSWR('getMyCurrentPlaybackState', {
-    refreshInterval: 30 * SECOND,
+    refreshInterval: 2 * SECOND,
   })
 
   const initializePlaybackOnCurrentDevice = React.useCallback(async () => {
@@ -115,21 +115,29 @@ export const PlaybackProvider: React.FC<Props> = ({
     context,
     playlistUri,
   ])
-  const playTrack = React.useCallback(
+  const playPauseTrack = React.useCallback(
     (track: SpotifyApi.TrackObjectFull) => {
-      // TODO: handle RESUME
+      const trackIsSelected = isSelectedTrack(track.id)
+      const shouldPause = trackIsSelected && isPlaying
+      if (shouldPause) {
+        sdk.pause()
+        return
+      }
 
-      const playOptions = {
+      const shouldResume = trackIsSelected && !isPlaying
+      const playOptions: SpotifyApi.PlayParameterObject = {
         // playlist URI
         context_uri: contextUri,
         // track URI
         offset: { uri: track.uri },
+        // either resume track or start from beginning
+        position_ms: shouldResume ? progressMs : 0,
       }
       sdk.play(playOptions)
       setSelectedTrack(track)
       setOptimisticUpdateInProgress(true)
     },
-    [contextUri, sdk]
+    [contextUri, isPlaying, isSelectedTrack, progressMs, sdk]
   )
 
   // console.log({
@@ -162,8 +170,8 @@ export const PlaybackProvider: React.FC<Props> = ({
   }, [serverSelectedTrack, optimisticUpdateInProgress, selectedTrackId])
 
   const actions: PlaybackActions = React.useMemo(
-    () => ({ isSelectedTrack, playTrack }),
-    [isSelectedTrack, playTrack]
+    () => ({ isSelectedTrack, playPauseTrack }),
+    [isSelectedTrack, playPauseTrack]
   )
 
   return (

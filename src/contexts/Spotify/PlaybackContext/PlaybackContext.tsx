@@ -7,8 +7,8 @@ import { SECOND } from '../../../util/time'
 type PlaybackState = {
   isPlaying: boolean
   progressMs: number
-  selectedTrack?: SpotifyApi.TrackObjectFull // TODO: spotify track
-  context: SpotifyApi.CurrentlyPlayingObject // TODO: playback context
+  selectedTrack?: SpotifyApi.TrackObjectFull
+  context: SpotifyApi.CurrentlyPlayingObject
 }
 
 const PlaybackStateContext = React.createContext<PlaybackState | undefined>(

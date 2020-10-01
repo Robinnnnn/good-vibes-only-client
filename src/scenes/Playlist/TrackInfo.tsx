@@ -6,7 +6,7 @@ import AnimatedText from './AnimatedText'
 import { AnimatedValue } from 'react-spring'
 
 type Props = {
-  data: any
+  data: SpotifyApi.TrackObjectFull
   position: number
   // @ts-expect-error
   progress: AnimatedValue

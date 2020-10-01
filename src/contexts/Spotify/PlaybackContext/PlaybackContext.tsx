@@ -156,8 +156,15 @@ export const PlaybackProvider: React.FC<Props> = ({
    */
   React.useEffect(() => {
     const selectedTrackInSync = serverSelectedTrack?.id === selectedTrackId
-    const playStateInSync = serverIsPlaying !== isPlaying
+    const playStateInSync = serverIsPlaying === isPlaying
     const synced = selectedTrackInSync && playStateInSync
+
+    console.log({
+      serverIsPlaying,
+      isPlaying,
+      synced,
+      optimisticUpdateInProgress,
+    })
 
     // UI is source of truth; server will catch up
     if (optimisticUpdateInProgress && !synced) return

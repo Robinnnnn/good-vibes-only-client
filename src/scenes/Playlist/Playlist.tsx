@@ -20,7 +20,7 @@ const useMemoizedTrackList = (items) => {
   )
 
   // only update playlist array if track composition changes;
-  // otherwise, we'll have a LOT of state updates as we poll
+  // otherwise, we'll have a LOT of React re-renders as we poll
   // for the latest state
   //
   // eslint-disable-next-line react-hooks/exhaustive-deps

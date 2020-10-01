@@ -61,7 +61,6 @@ const AnimatedDraggableList = ({
   // Create springs, each corresponds to an item, controlling its transform, scale, etc.
   const [springs, setSprings] = useSprings(
     numItems,
-    // getSpringConfigForOrder({ trackOrder: trackOrder.current })
     getSpringConfigForOrder({ trackOrder: trackOrder.current })
   )
   const bind = useGesture(({ args: [originalIndex], down, delta: [, y] }) => {

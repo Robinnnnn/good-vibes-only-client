@@ -12,7 +12,7 @@ import { useSpotifyState } from '../../contexts/Spotify/ConfigContext/ConfigCont
 
 type Props = {
   position: number
-  data: any // TODO: spotify track
+  data: SpotifyApi.TrackObjectFull
 }
 
 const Track: React.FC<Props> = ({ position, data: track }) => {

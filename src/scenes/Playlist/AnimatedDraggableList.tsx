@@ -20,7 +20,7 @@ type SpringConfig = {
   y: number
   scale: number
   zIndex: string
-  immediate: any
+  immediate: boolean | ((n: string) => boolean)
 }
 
 type ReturnFunction = (key: number) => SpringConfig

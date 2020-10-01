@@ -8,7 +8,6 @@ import {
   usePlaybackActions,
   usePlaybackState,
 } from '../../contexts/Spotify/PlaybackContext/PlaybackContext'
-import { useSpotifyState } from '../../contexts/Spotify/ConfigContext/ConfigContext'
 
 type Props = {
   position: number
@@ -16,12 +15,15 @@ type Props = {
 }
 
 const Track: React.FC<Props> = ({ position, data: track }) => {
-  const { isSelectedTrack, playTrack } = usePlaybackActions()
+  const { isPlaying: activePlayback } = usePlaybackState()
+  const { isSelectedTrack, playPauseTrack } = usePlaybackActions()
   const isSelected = isSelectedTrack(track.id)
+  const isPlaying = isSelected && activePlayback
+  const isPaused = isSelected && !isPlaying
 
-  const [hoverEnabled, setHoverEnabled] = React.useState(false)
-  const enableHover = React.useCallback(() => setHoverEnabled(true), [])
-  const disableHover = React.useCallback(() => setHoverEnabled(false), [])
+  const [isHovering, setIsHovering] = React.useState(false)
+  const enableHover = React.useCallback(() => setIsHovering(true), [])
+  const disableHover = React.useCallback(() => setIsHovering(false), [])
 
   const { progress, animateText, deanimateText } = useAnimatedProgress()
 
@@ -35,16 +37,9 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
     deanimateText()
   }, [disableHover, deanimateText])
 
-  const { sdk } = useSpotifyState()
-  const { isPlaying } = usePlaybackState()
-  const thisTrackIsPlaying = isSelected && isPlaying
-  const handlePlay = React.useCallback(() => {
-    if (thisTrackIsPlaying) {
-      sdk.pause()
-      return
-    }
-    playTrack(track)
-  }, [thisTrackIsPlaying, playTrack, track, sdk])
+  const handlePlayPause = React.useCallback(() => {
+    playPauseTrack(track)
+  }, [playPauseTrack, track])
 
   return (
     <TrackContainer
@@ -52,20 +47,22 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
       className='track'
       onMouseOver={handleMouseOver}
       onMouseLeave={handleMouseLeave}
-      onClick={handlePlay}
+      onClick={handlePlayPause}
     >
       <AlbumCover
         position={position}
         imgUrl={track.album.images[0].url}
-        hoverEnabled={hoverEnabled}
-        isSelected={isSelected}
+        isHovering={isHovering}
+        isPlaying={isPlaying}
+        isPaused={isPaused}
       />
       <TrackInfo
         position={position}
         data={track}
         progress={progress}
-        hoverEnabled={hoverEnabled}
-        isSelected={isSelected}
+        isHovering={isHovering}
+        isPlaying={isPlaying}
+        isPaused={isPaused}
       />
     </TrackContainer>
   )

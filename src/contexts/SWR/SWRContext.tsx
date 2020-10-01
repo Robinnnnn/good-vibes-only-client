@@ -1,8 +1,9 @@
 import React from 'react'
 import { SWRConfig } from 'swr'
-import { useSpotifyState } from '../Spotify'
+import { useSpotifyState } from '../Spotify/ConfigContext/ConfigContext'
 import log from '../../util/log'
 import SpotifyWebApi from 'spotify-web-api-js'
+import { MINUTE } from '../../util/time'
 
 // Have to use `any` here because Spotify's interface doesn't follow a generic pattern
 type SpotifyRequestMethod = (...args: any) => any
@@ -17,7 +18,7 @@ export const AuthenticatedSpotifySWRProvider: React.FC = ({ children }) => {
       const fn = sdk[action] as SpotifyRequestMethod
       return fn(...args)
     },
-    refreshInterval: 1000 * 60 * 5, // refresh data every 5 minutes
+    refreshInterval: 5 * MINUTE, // refresh data every 5 minutes
     suspense: true,
   }
   return <SWRConfig value={value}>{children}</SWRConfig>

@@ -1,5 +1,5 @@
 import SpotifySDK from 'spotify-web-api-js'
-import log, { FLAVORS } from '../../util/log'
+import log, { FLAVORS } from '../../../util/log'
 
 // Takes a user refresh token and returns a new access token
 export async function refreshAndCacheAccessToken(

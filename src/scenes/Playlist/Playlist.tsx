@@ -1,89 +1,65 @@
 import React from 'react'
 import { RouteComponentProps } from '@reach/router'
-import { useAuthActions } from '../../contexts/Auth'
+import { useAuthActions } from '../../contexts/Auth/AuthContext'
 import useSWR from 'swr'
 import styled from '@emotion/styled'
-import clamp from 'lodash.clamp'
-import swap from 'lodash-move'
-import { useGesture } from 'react-use-gesture'
-import { useSprings, animated, interpolate } from 'react-spring'
+import AnimatedDraggableList from './AnimatedDraggableList'
 import Track from './Track'
+import { PlaybackProvider } from '../../contexts/Spotify/PlaybackContext/PlaybackContext'
 
-const height = 108
+const TRACKS_TO_DISPLAY = 10
 
-const fn = (order, down, originalIndex, curIndex, y) => (index) =>
-  down && index === originalIndex
-    ? {
-        y: curIndex * height + y,
-        scale: 0.9,
-        zIndex: '1',
-        // shadow: 15,
-        immediate: (n) => n === 'y' || n === 'zIndex',
-      }
-    : {
-        y: order.indexOf(index) * height,
-        scale: 1,
-        zIndex: '0',
-        // shadow: 1,
-        immediate: false,
-      }
+const useMemoizedTrackList = (items) => {
+  const hash = React.useMemo(
+    () =>
+      items
+        .slice(0, TRACKS_TO_DISPLAY)
+        .map((item) => item.track.id)
+        .join('-'),
+    [items]
+  )
 
-const Playlist: React.FC<RouteComponentProps> = ({ id }) => {
+  // only update playlist array if track composition changes;
+  // otherwise, we'll have a LOT of React re-renders as we poll
+  // for the latest state
+  //
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return React.useMemo(() => items.slice(0, TRACKS_TO_DISPLAY), [hash])
+}
+
+const Playlist: React.FC<RouteComponentProps> = ({ id: playlistId }) => {
   const { logout } = useAuthActions()
 
-  const { data } = useSWR(['getPlaylist', id])
+  const { data } = useSWR(['getPlaylist', playlistId])
 
-  const tracks = data.tracks.items.slice(0, 10)
-  const covers = tracks.map((t) => t.track.album.images)
-  console.log(tracks)
+  const tracks = useMemoizedTrackList(
+    data.tracks.items.slice(0, TRACKS_TO_DISPLAY)
+  )
+  // const tracks = data.tracks.items
 
-  const order = React.useRef(tracks.map((_, index) => index)) // Store indicies as a local ref, this represents the item order
-  const [springs, setSprings] = useSprings(tracks.length, fn(order.current)) // Create springs, each corresponds to an item, controlling its transform, scale, etc.
-  console.log({ springs })
-  const bind = useGesture(({ args: [originalIndex], down, delta: [, y] }) => {
-    const curIndex = order.current.indexOf(originalIndex)
-    const curRow = clamp(
-      Math.round((curIndex * height + y) / 100),
-      0,
-      tracks.length - 1
-    )
-    const newOrder = swap(order.current, curIndex, curRow)
-    setSprings(fn(newOrder, down, originalIndex, curIndex, y)) // Feed springs new style data, they'll animate the view without causing a single render
-    if (!down) order.current = newOrder
-  })
+  const TrackRow = React.useCallback(
+    ({ position }) => (
+      <Track
+        key={tracks[position].track.id}
+        position={position}
+        data={tracks[position].track}
+      />
+    ),
+    [tracks]
+  )
 
   return (
-    <PlaylistContainer>
-      <Tracks>
-        {springs.map(({ zIndex, shadow, y, scale }, i) => (
-          <animated.div
-            {...bind(i)}
-            key={i}
-            style={{
-              zIndex,
-              // boxShadow: shadow.interpolate(
-              //   (s) => `rgba(0, 0, 0, 0.15) 0px ${s}px ${2 * s}px 0px`
-              // ),
-              transform: interpolate(
-                [y, scale],
-                (y, s) => `translate3d(0,${y}px,0) scale(${s})`
-              ),
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-            children={
-              <Track
-                key={tracks[i].track.id}
-                position={i}
-                data={tracks[i].track}
-              />
-            }
+    <PlaybackProvider playlistUri={data.uri}>
+      <PlaylistContainer>
+        <Tracks>
+          <AnimatedDraggableList
+            numItems={tracks.length}
+            ChildComponent={TrackRow}
           />
-        ))}
-      </Tracks>
-      {/* <button onClick={logout}>logout</button> */}
-    </PlaylistContainer>
+        </Tracks>
+        {/* <button onClick={logout}>logout</button> */}
+      </PlaylistContainer>
+    </PlaybackProvider>
   )
 }
 

@@ -1,5 +1,6 @@
 import React from 'react'
 import ErrorNotification from '../../shared/notifications/Error'
+import { SECOND } from '../../util/time'
 
 type ApplicationError = {
   message: string
@@ -60,7 +61,7 @@ export const ErrorProvider: React.FC = ({ children }) => {
 
   React.useEffect(() => {
     if (errorState !== OK) {
-      setTimeout(() => setErrorState(OK), 5000)
+      setTimeout(() => setErrorState(OK), 5 * SECOND)
     }
   }, [errorState])
 

@@ -1,11 +1,11 @@
 import React from 'react'
 import Loading from '../../scenes/Loading'
-import { useErrorActions } from '../Error'
+import { useErrorActions } from '../Error/ErrorContext'
 import { navigate } from '@reach/router'
 import usePersistedState from '../../hooks/usePersistedState'
 import * as utils from './utils'
-import { useSpotifyActions } from '../Spotify'
-import { requestRefreshedAccessToken } from '../Spotify/refreshToken'
+import { useSpotifyActions } from '../Spotify/ConfigContext/ConfigContext'
+import { requestRefreshedAccessToken } from '../Spotify/ConfigContext/refreshToken'
 import log, { FLAVORS } from '../../util/log'
 
 /**

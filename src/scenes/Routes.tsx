@@ -3,8 +3,8 @@ import { Router, Redirect } from '@reach/router'
 import Login from './Login'
 import Playlist from './Playlist/Playlist'
 import NotFound from './NotFound'
-import { useAuthState, LoggedOutState } from '../contexts/Auth'
-import { AuthenticatedSpotifySWRProvider } from '../contexts/SWR'
+import { useAuthState, LoggedOutState } from '../contexts/Auth/AuthContext'
+import { AuthenticatedSpotifySWRProvider } from '../contexts/SWR/SWRContext'
 
 const Routes: React.FC = () => {
   const state = useAuthState()

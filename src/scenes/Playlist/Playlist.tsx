@@ -7,7 +7,7 @@ import AnimatedDraggableList from './AnimatedDraggableList'
 import Track from './Track'
 import { PlaybackProvider } from '../../contexts/Spotify/PlaybackContext/PlaybackContext'
 
-const TRACKS_TO_DISPLAY = 10
+const TRACKS_TO_DISPLAY = 50
 
 const useMemoizedTrackList = (items) => {
   const hash = React.useMemo(

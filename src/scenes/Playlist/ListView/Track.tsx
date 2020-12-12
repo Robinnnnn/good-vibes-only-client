@@ -7,7 +7,7 @@ import { useAnimatedProgress } from './AnimatedText'
 import {
   usePlaybackActions,
   usePlaybackState,
-} from '../../contexts/Spotify/PlaybackContext/PlaybackContext'
+} from '../../../contexts/Spotify/PlaybackContext/PlaybackContext'
 
 type Props = {
   position: number

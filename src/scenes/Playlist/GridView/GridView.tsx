@@ -1,17 +1,24 @@
 import React from 'react'
 import styled from '@emotion/styled'
+import Track from './Track'
 
 type Props = {
   data: any
 }
 
 const GridView: React.FC<Props> = ({ data }) => {
-  console.log('the data!', data)
-  return <GridViewContainer>{data.tracks.items.length}</GridViewContainer>
+  return (
+    <GridContainer>
+      {data.tracks.items.map(({ track }, index) => (
+        <Track position={index} data={track} />
+      ))}
+    </GridContainer>
+  )
 }
 
-const GridViewContainer = styled.div`
-  padding: 80px 200px;
+const GridContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
 `
 
 export default GridView

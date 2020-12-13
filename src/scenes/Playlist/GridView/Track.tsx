@@ -1,13 +1,13 @@
 import React from 'react'
 import { css, keyframes } from '@emotion/core'
 import styled from '@emotion/styled'
-import AlbumCover from './AlbumCover'
-import TrackInfo from './TrackInfo'
-import { useAnimatedProgress } from './AnimatedText'
 import {
   usePlaybackActions,
   usePlaybackState,
 } from '../../../contexts/Spotify/PlaybackContext/PlaybackContext'
+// import { useAnimatedProgress } from './AnimatedText'
+import AlbumCover from '../shared/AlbumCover'
+// import TrackInfo from './TrackInfo'
 
 type Props = {
   position: number
@@ -25,17 +25,17 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
   const enableHover = React.useCallback(() => setIsHovering(true), [])
   const disableHover = React.useCallback(() => setIsHovering(false), [])
 
-  const { progress, animateText, deanimateText } = useAnimatedProgress()
+  //   const { progress, animateText, deanimateText } = useAnimatedProgress()
 
   const handleMouseOver = React.useCallback(() => {
     enableHover()
-    animateText()
-  }, [enableHover, animateText])
+    // animateText()
+  }, [enableHover])
 
   const handleMouseLeave = React.useCallback(() => {
     disableHover()
-    deanimateText()
-  }, [disableHover, deanimateText])
+    // deanimateText()
+  }, [disableHover])
 
   const handlePlayPause = React.useCallback(() => {
     playPauseTrack(track)
@@ -52,19 +52,20 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
     >
       <AlbumCover
         position={position}
+        thumbnailSize={100}
         imgUrl={track.album.images[0].url}
         isHovering={isHovering}
         isPlaying={isPlaying}
         isPaused={isPaused}
       />
-      <TrackInfo
+      {/* <TrackInfo
         position={position}
         data={track}
         progress={progress}
         isHovering={isHovering}
         isPlaying={isPlaying}
         isPaused={isPaused}
-      />
+      /> */}
     </TrackContainer>
   )
 }
@@ -78,8 +79,8 @@ const fadein = keyframes`
   }
 `
 
-const popRightOnHover = ({ isHovering }) => css`
-  ${isHovering ? 'transform: translateX(30px)' : ''}
+const liftOnHover = ({ isHovering }) => css`
+  ${isHovering ? 'transform: translateY(-10px)' : ''}
 `
 
 const staggeredFade = ({ position }) => css`
@@ -91,20 +92,17 @@ const staggeredFade = ({ position }) => css`
 `
 
 const TrackContainer = styled.div<{ position: number; isHovering: boolean }>`
-  position: absolute;
-  width: 500px;
+  padding: 20px;
 
   display: flex;
   justify-content: left;
   align-items: center;
 
-  height: 128px;
-
   cursor: pointer;
   user-select: none;
 
   ${staggeredFade}
-  ${popRightOnHover}
+  ${liftOnHover}
 `
 
 export default Track

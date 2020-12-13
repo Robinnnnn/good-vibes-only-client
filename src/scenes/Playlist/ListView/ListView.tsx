@@ -46,17 +46,17 @@ const ListView: React.FC<Props> = ({ data }) => {
   )
 
   return (
-    <Tracks>
+    <ListContainer>
       <AnimatedDraggableList
         numItems={tracks.length}
         ChildComponent={TrackRow}
       />
-    </Tracks>
+    </ListContainer>
     // <Deck />
   )
 }
 
-const Tracks = styled.div`
+const ListContainer = styled.div`
   display: flex;
   flex-direction: column;
 `

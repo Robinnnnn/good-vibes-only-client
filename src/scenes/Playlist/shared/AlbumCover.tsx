@@ -4,6 +4,7 @@ import { css, keyframes } from '@emotion/core'
 
 type Props = {
   position: number
+  thumbnailSize: number
   imgUrl: string
   isHovering: boolean
   isPlaying: boolean
@@ -12,17 +13,27 @@ type Props = {
 
 const AlbumCover: React.FC<Props> = ({
   position,
+  thumbnailSize,
   imgUrl,
   isHovering,
   isPlaying,
   isPaused,
 }) => {
   return (
-    <Wrapper isHovering={isHovering} isPlaying={isPlaying} isPaused={isPaused}>
-      <CoverContainer className='container' position={position}>
+    <Wrapper
+      size={thumbnailSize}
+      isHovering={isHovering}
+      isPlaying={isPlaying}
+      isPaused={isPaused}
+    >
+      <CoverContainer
+        size={thumbnailSize}
+        className='container'
+        position={position}
+      >
         {/* scales slightly up to reduce width of border */}
         <CoverScaleWrapper className='pic-scale-wrapper'>
-          <Cover className='pic' src={imgUrl} />
+          <Cover className='pic' src={imgUrl} size={thumbnailSize} />
         </CoverScaleWrapper>
         <Hole className='hole' />
       </CoverContainer>
@@ -43,9 +54,11 @@ const Wrapper = styled.div<{
   isHovering: boolean
   isPlaying: boolean
   isPaused: boolean
+  size: number
 }>`
-  width: 88px;
-  height: 88px;
+  width: ${({ size }) => `${size}px`};
+  height: ${({ size }) => `${size}px`};
+
   transform: scale(1);
 
   transition: transform 0.7s cubic-bezier(0.14, 0.97, 1, 1);
@@ -54,10 +67,6 @@ const Wrapper = styled.div<{
     if (isPlaying) {
       return css`
         transform: scale(1.55) translateX(70px);
-
-        .pic-flip-wrapper {
-          /* transform: rotateX(360deg); */
-        }
 
         .pic-scale-wrapper {
           transform: scale(1.03);
@@ -140,11 +149,11 @@ const fadein = keyframes`
   }
 `
 
-const CoverContainer = styled.div<{ position: number }>`
+const CoverContainer = styled.div<{ size: number; position: number }>`
+  width: ${({ size }) => `${size}px`};
+  height: ${({ size }) => `${size}px`};
   position: relative;
   border-radius: 100%;
-  width: 88px;
-  height: 88px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -169,11 +178,11 @@ box-shadow:  14px 14px 26px #131313,
              -14px -14px 26px #4d4d4d; */
 }`
 
-const Cover = styled.img`
+const Cover = styled.img<{ size: number }>`
   position: absolute;
   border-radius: 100%;
-  width: 80px;
-  height: 80px;
+  width: ${({ size }) => `${size - 8}px`};
+  height: ${({ size }) => `${size - 8}px`};
   filter: brightness(80%);
 
   transition: filter 0.6s cubic-bezier(0.14, 0.97, 1, 1);

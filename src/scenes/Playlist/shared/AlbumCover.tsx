@@ -81,7 +81,7 @@ const CoverContainer = styled.div<{ size: number; position: number }>`
   cursor: pointer;
 
   animation: ${rotateIn} 1200ms;
-  animation-delay: ${({ position }) => `${position * 100}ms`};
+  animation-delay: ${({ position }) => `${position * 50}ms`};
   animation-fill-mode: forwards;
   animation-timing-function: cubic-bezier(0,1.39,.67,.98);
 

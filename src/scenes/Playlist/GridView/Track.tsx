@@ -84,7 +84,7 @@ const fadein = keyframes`
 const staggeredFade = ({ position }) => css`
   opacity: 0;
   animation: ${fadein} 1200ms;
-  animation-delay: ${position * 100}ms;
+  animation-delay: ${position * 50}ms;
   animation-fill-mode: forwards;
 `
 

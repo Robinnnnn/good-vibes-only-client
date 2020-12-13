@@ -52,13 +52,15 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
       onMouseLeave={handleMouseLeave}
       onClick={handlePlayPause}
     >
-      <AlbumCover
-        position={position}
-        imgUrl={track.album.images[0].url}
-        isHovering={isHovering}
-        isPlaying={isPlaying}
-        isPaused={isPaused}
-      />
+      <_Lift position={position}>
+        <AlbumCover
+          position={position}
+          imgUrl={track.album.images[0].url}
+          isHovering={isHovering}
+          isPlaying={isPlaying}
+          isPaused={isPaused}
+        />
+      </_Lift>
       <TrackInfo
         position={position}
         data={track}
@@ -87,6 +89,25 @@ const staggeredFade = ({ position }) => css`
   animation-fill-mode: forwards;
 `
 
+const lift = keyframes`
+  from {
+    transform: translateY(-30px);
+  }
+  to {
+    transform: translateY(0px);
+  }
+`
+
+const staggeredLift = ({ position }) => css`
+  animation: ${lift} 1200ms;
+  animation-delay: ${position * 100}ms;
+  animation-fill-mode: forwards;
+`
+
+const _Lift = styled.div<{ position: number }>`
+  ${staggeredLift}
+`
+
 const popRightAndScaleOnHover = ({ isHovering }) => css`
   ${isHovering ? 'transform: translateX(30px) scale(1.25)' : ''}
 `
@@ -100,11 +121,11 @@ const popRightOnPause = ({ isPaused }) => css`
 `
 
 const scaleOnPlay = ({ isPlaying }) => css`
-  ${isPlaying ? 'transform: scale(1.55)' : ''}
+  ${isPlaying ? 'transform: scale(1)' : ''}
 `
 
 const scaleOnPause = ({ isPaused }) => css`
-  ${isPaused ? 'transform: scale(1.55)' : ''}
+  ${isPaused ? 'transform: scale(1)' : ''}
 `
 
 const TrackContainer = styled.div<{

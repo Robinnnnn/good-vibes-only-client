@@ -32,7 +32,11 @@ const AlbumCover: React.FC<Props> = ({
         position={position}
       >
         {/* slightly scales up the inner image to reduce width of outer "lip" */}
-        <_ImgScaler className='img-scaler'>
+        <_ImgScaler
+          isHovering={isHovering}
+          isPlaying={isPlaying}
+          isPaused={isPaused}
+        >
           <Cover className='pic' src={imgUrl} size={thumbnailSize} />
         </_ImgScaler>
         <Hole className='hole' />
@@ -80,10 +84,6 @@ const Wrapper = styled.div<{
   ${({ isHovering, isPlaying, isPaused }) => {
     if (isPlaying) {
       return css`
-        .img-scaler {
-          transform: scale(1.03);
-        }
-
         .pic {
           ${standardSpin}
           filter: brightness(100%);
@@ -95,10 +95,6 @@ const Wrapper = styled.div<{
 
     if (isPaused) {
       return css`
-        .img-scaler {
-          transform: scale(1.03);
-        }
-
         .pic {
           ${standardSpin}
           /* give paused tracks an "inactive" look */
@@ -111,10 +107,6 @@ const Wrapper = styled.div<{
 
     if (isHovering) {
       return css`
-        .img-scaler {
-          transform: scale(1.03);
-        }
-
         .pic {
           ${slowSpin}
           filter: brightness(100%);
@@ -126,13 +118,21 @@ const Wrapper = styled.div<{
   }}
 `
 
-const _ImgScaler = styled.div`
+const _ImgScaler = styled.div<{
+  isHovering: boolean
+  isPlaying: boolean
+  isPaused: boolean
+}>`
   display: flex;
   justify-content: center;
   align-items: center;
 
   transform: scale(1);
   transition: transform 0.2s cubic-bezier(0.14, 0.97, 1, 1);
+
+  ${({ isHovering, isPlaying, isPaused }) => css`
+    ${isHovering || isPlaying || isPaused ? 'transform: scale(1.03)' : ''}
+  `}
 `
 
 const fadein = keyframes`

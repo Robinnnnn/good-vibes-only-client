@@ -66,7 +66,7 @@ const Wrapper = styled.div<{
   ${({ isHovering, isPlaying, isPaused }) => {
     if (isPlaying) {
       return css`
-        transform: scale(1.55) translateX(70px);
+        transform: scale(1.55);
 
         .pic-scale-wrapper {
           transform: scale(1.03);
@@ -85,7 +85,7 @@ const Wrapper = styled.div<{
 
     if (isPaused) {
       return css`
-        transform: scale(1.55) translateX(70px);
+        transform: scale(1.55);
 
         .pic-flip-wrapper {
           /* transform: rotateX(360deg); */

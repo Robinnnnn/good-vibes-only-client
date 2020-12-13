@@ -45,6 +45,8 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
     <TrackContainer
       position={position}
       isHovering={isHovering}
+      isPlaying={isPlaying}
+      isPaused={isPaused}
       className='track'
       onMouseOver={handleMouseOver}
       onMouseLeave={handleMouseLeave}
@@ -82,6 +84,14 @@ const popRightOnHover = ({ isHovering }) => css`
   ${isHovering ? 'transform: translateX(30px)' : ''}
 `
 
+const popRightOnPlay = ({ isPlaying }) => css`
+  ${isPlaying ? 'transform: translateX(70px)' : ''}
+`
+
+const popRightOnPause = ({ isPaused }) => css`
+  ${isPaused ? 'transform: translateX(70px)' : ''}
+`
+
 const staggeredFade = ({ position }) => css`
   opacity: 0;
   animation: ${fadein} 1200ms;
@@ -90,7 +100,12 @@ const staggeredFade = ({ position }) => css`
   transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
 `
 
-const TrackContainer = styled.div<{ position: number; isHovering: boolean }>`
+const TrackContainer = styled.div<{
+  position: number
+  isHovering: boolean
+  isPlaying: boolean
+  isPaused: boolean
+}>`
   position: absolute;
   width: 500px;
 
@@ -105,6 +120,8 @@ const TrackContainer = styled.div<{ position: number; isHovering: boolean }>`
 
   ${staggeredFade}
   ${popRightOnHover}
+  ${popRightOnPlay}
+  ${popRightOnPause}
 `
 
 export default Track

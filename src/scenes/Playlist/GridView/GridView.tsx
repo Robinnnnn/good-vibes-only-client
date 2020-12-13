@@ -19,6 +19,7 @@ const GridView: React.FC<Props> = ({ data }) => {
 const GridContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 `
 
 export default GridView

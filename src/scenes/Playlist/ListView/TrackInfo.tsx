@@ -2,7 +2,7 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { css, keyframes } from '@emotion/core'
 
-import AnimatedText from './AnimatedText'
+import AnimatedText from '../shared/AnimatedText'
 import { AnimatedValue } from 'react-spring'
 
 type Props = {

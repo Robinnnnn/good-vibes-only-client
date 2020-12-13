@@ -20,46 +20,35 @@ const AlbumCover: React.FC<Props> = ({
   isPaused,
 }) => {
   return (
-    <CoverContainer
-      size={thumbnailSize}
-      className='container'
-      position={position}
-    >
-      {/* slightly scales up the inner image to reduce width of outer "lip" */}
-      <_ImgScaler
-        isHovering={isHovering}
-        isPlaying={isPlaying}
-        isPaused={isPaused}
+    <_Scale isHovering={isHovering} isPlaying={isPlaying} isPaused={isPaused}>
+      <CoverContainer
+        size={thumbnailSize}
+        className='container'
+        position={position}
       >
-        <Cover
-          src={imgUrl}
-          size={thumbnailSize}
+        {/* slightly scales up the inner image to reduce width of outer "lip" */}
+        <_ImgScaler
+          isHovering={isHovering}
+          isPlaying={isPlaying}
+          isPaused={isPaused}
+        >
+          <Cover
+            src={imgUrl}
+            size={thumbnailSize}
+            isHovering={isHovering}
+            isPlaying={isPlaying}
+            isPaused={isPaused}
+          />
+        </_ImgScaler>
+        <Hole
           isHovering={isHovering}
           isPlaying={isPlaying}
           isPaused={isPaused}
         />
-      </_ImgScaler>
-      <Hole isHovering={isHovering} isPlaying={isPlaying} isPaused={isPaused} />
-    </CoverContainer>
+      </CoverContainer>
+    </_Scale>
   )
 }
-
-const _ImgScaler = styled.div<{
-  isHovering: boolean
-  isPlaying: boolean
-  isPaused: boolean
-}>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  transform: scale(1);
-  transition: transform 0.2s cubic-bezier(0.14, 0.97, 1, 1);
-
-  ${({ isHovering, isPlaying, isPaused }) => css`
-    ${isHovering || isPlaying || isPaused ? 'transform: scale(1.03)' : ''}
-  `}
-`
 
 const rotateIn = keyframes`
   from {
@@ -70,7 +59,33 @@ const rotateIn = keyframes`
   }
 `
 
-const CoverContainer = styled.div<{ size: number; position: number }>`
+const liftAndScaleOnHover = ({ isHovering }) => css`
+  ${isHovering ? 'transform: translateY(-15px) scale(1.15)' : ''}
+`
+
+const scaleOnPlay = ({ isPlaying }) => css`
+  ${isPlaying ? 'transform: translateY(-15px) scale(1.3)' : ''}
+`
+
+const scaleOnPause = ({ isPaused }) => css`
+  ${isPaused ? 'transform: translateY(-15px) scale(1.25)' : ''}
+`
+
+const _Scale = styled.div<{
+  isHovering: boolean
+  isPlaying: boolean
+  isPaused: boolean
+}>`
+  transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
+  ${liftAndScaleOnHover}
+  ${scaleOnPlay}
+  ${scaleOnPause}
+`
+
+const CoverContainer = styled.div<{
+  size: number
+  position: number
+}>`
   width: ${({ size }) => `${size}px`};
   height: ${({ size }) => `${size}px`};
   position: relative;
@@ -97,6 +112,23 @@ box-shadow:  12px 12px 24px #d1d1d1,
 box-shadow:  14px 14px 26px #131313, 
              -14px -14px 26px #4d4d4d; */
 }`
+
+const _ImgScaler = styled.div<{
+  isHovering: boolean
+  isPlaying: boolean
+  isPaused: boolean
+}>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transform: scale(1);
+  transition: transform 0.2s cubic-bezier(0.14, 0.97, 1, 1);
+
+  ${({ isHovering, isPlaying, isPaused }) => css`
+    ${isHovering || isPlaying || isPaused ? 'transform: scale(1.03)' : ''}
+  `}
+`
 
 const spin = keyframes`
   from {

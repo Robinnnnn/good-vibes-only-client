@@ -5,9 +5,9 @@ import {
   usePlaybackActions,
   usePlaybackState,
 } from '../../../contexts/Spotify/PlaybackContext/PlaybackContext'
-// import { useAnimatedProgress } from './AnimatedText'
+import { useAnimatedProgress } from '../shared/AnimatedText'
 import AlbumCover from '../shared/AlbumCover'
-// import TrackInfo from './TrackInfo'
+import TrackInfo from './TrackInfo'
 
 type Props = {
   position: number
@@ -25,7 +25,7 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
   const enableHover = React.useCallback(() => setIsHovering(true), [])
   const disableHover = React.useCallback(() => setIsHovering(false), [])
 
-  //   const { progress, animateText, deanimateText } = useAnimatedProgress()
+  const { progress, animateText, deanimateText } = useAnimatedProgress()
 
   const handleMouseOver = React.useCallback(() => {
     enableHover()
@@ -60,14 +60,14 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
         isPlaying={isPlaying}
         isPaused={isPaused}
       />
-      {/* <TrackInfo
+      <TrackInfo
         position={position}
         data={track}
         progress={progress}
         isHovering={isHovering}
         isPlaying={isPlaying}
         isPaused={isPaused}
-      /> */}
+      />
     </TrackContainer>
   )
 }
@@ -88,29 +88,22 @@ const staggeredFade = ({ position }) => css`
   animation-fill-mode: forwards;
 `
 
-const liftAndScaleOnHover = ({ isHovering }) => css`
-  ${isHovering ? 'transform: translateY(-10px) scale(1.25)' : ''}
-`
-
-const scaleOnPlay = ({ isPlaying }) => css`
-  ${isPlaying ? 'transform: scale(1.3)' : ''}
-`
-
-const scaleOnPause = ({ isPaused }) => css`
-  ${isPaused ? 'transform: scale(1.25)' : ''}
-`
-
 const TrackContainer = styled.div<{
   position: number
   isHovering: boolean
   isPlaying: boolean
   isPaused: boolean
 }>`
-  padding: 20px;
+  margin: 20px;
+  width: 140px;
+
+  padding: 0px;
 
   display: flex;
   justify-content: center;
   align-items: center;
+
+  flex-direction: column;
 
   cursor: pointer;
   user-select: none;
@@ -118,9 +111,6 @@ const TrackContainer = styled.div<{
   transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
 
   ${staggeredFade}
-  ${liftAndScaleOnHover}
-  ${scaleOnPlay}
-  ${scaleOnPause}
 `
 
 export default Track

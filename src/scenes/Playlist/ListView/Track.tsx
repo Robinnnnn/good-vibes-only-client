@@ -3,7 +3,7 @@ import { css, keyframes } from '@emotion/core'
 import styled from '@emotion/styled'
 import AlbumCover from './AlbumCover'
 import TrackInfo from './TrackInfo'
-import { useAnimatedProgress } from './AnimatedText'
+import { useAnimatedProgress } from '../shared/AnimatedText'
 import {
   usePlaybackActions,
   usePlaybackState,

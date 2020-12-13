@@ -45,6 +45,8 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
     <TrackContainer
       position={position}
       isHovering={isHovering}
+      isPlaying={isPlaying}
+      isPaused={isPaused}
       className='track'
       onMouseOver={handleMouseOver}
       onMouseLeave={handleMouseLeave}
@@ -79,30 +81,46 @@ const fadein = keyframes`
   }
 `
 
-const liftOnHover = ({ isHovering }) => css`
-  ${isHovering ? 'transform: translateY(-10px)' : ''}
-`
-
 const staggeredFade = ({ position }) => css`
   opacity: 0;
   animation: ${fadein} 1200ms;
   animation-delay: ${position * 100}ms;
   animation-fill-mode: forwards;
-  transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
 `
 
-const TrackContainer = styled.div<{ position: number; isHovering: boolean }>`
+const liftAndScaleOnHover = ({ isHovering }) => css`
+  ${isHovering ? 'transform: translateY(-10px) scale(1.25)' : ''}
+`
+
+const scaleOnPlay = ({ isPlaying }) => css`
+  ${isPlaying ? 'transform: scale(1.3)' : ''}
+`
+
+const scaleOnPause = ({ isPaused }) => css`
+  ${isPaused ? 'transform: scale(1.25)' : ''}
+`
+
+const TrackContainer = styled.div<{
+  position: number
+  isHovering: boolean
+  isPlaying: boolean
+  isPaused: boolean
+}>`
   padding: 20px;
 
   display: flex;
-  justify-content: left;
+  justify-content: center;
   align-items: center;
 
   cursor: pointer;
   user-select: none;
 
+  transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
+
   ${staggeredFade}
-  ${liftOnHover}
+  ${liftAndScaleOnHover}
+  ${scaleOnPlay}
+  ${scaleOnPause}
 `
 
 export default Track

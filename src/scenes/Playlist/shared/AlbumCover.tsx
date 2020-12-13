@@ -31,10 +31,10 @@ const AlbumCover: React.FC<Props> = ({
         className='container'
         position={position}
       >
-        {/* scales slightly up to reduce width of border */}
-        <CoverScaleWrapper className='pic-scale-wrapper'>
+        {/* slightly scales up the inner image to reduce width of outer "lip" */}
+        <_ImgScaler className='img-scaler'>
           <Cover className='pic' src={imgUrl} size={thumbnailSize} />
-        </CoverScaleWrapper>
+        </_ImgScaler>
         <Hole className='hole' />
       </CoverContainer>
     </Wrapper>
@@ -47,6 +47,20 @@ const spin = keyframes`
   }
   to {
     transform: rotate(360deg);
+  }
+`
+
+const standardSpin = css`
+  animation: ${spin} 8s linear infinite;
+`
+
+const slowSpin = css`
+  animation: ${spin} 8s linear infinite;
+`
+
+const activeHole = css`
+  .hole {
+    transform: scale(1);
   }
 `
 
@@ -66,68 +80,53 @@ const Wrapper = styled.div<{
   ${({ isHovering, isPlaying, isPaused }) => {
     if (isPlaying) {
       return css`
-        transform: scale(1.55);
-
-        .pic-scale-wrapper {
+        .img-scaler {
           transform: scale(1.03);
         }
 
         .pic {
-          animation: ${spin} 8s linear infinite;
+          ${standardSpin}
           filter: brightness(100%);
         }
 
-        .hole {
-          transform: scale(1);
-        }
+        ${activeHole}
       `
     }
 
     if (isPaused) {
       return css`
-        transform: scale(1.55);
-
-        .pic-flip-wrapper {
-          /* transform: rotateX(360deg); */
-        }
-
-        .pic-scale-wrapper {
+        .img-scaler {
           transform: scale(1.03);
         }
 
         .pic {
-          animation: ${spin} 8s linear infinite;
+          ${standardSpin}
+          /* give paused tracks an "inactive" look */
           filter: brightness(80%);
         }
 
-        .hole {
-          transform: scale(1);
-        }
+        ${activeHole}
       `
     }
 
     if (isHovering) {
       return css`
-        transform: scale(1.25);
-
-        .pic-scale-wrapper {
+        .img-scaler {
           transform: scale(1.03);
         }
 
         .pic {
-          animation: ${spin} 10s linear infinite;
+          ${slowSpin}
           filter: brightness(100%);
         }
 
-        .hole {
-          transform: scale(1);
-        }
+        ${activeHole}
       `
     }
   }}
 `
 
-const CoverScaleWrapper = styled.div`
+const _ImgScaler = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;

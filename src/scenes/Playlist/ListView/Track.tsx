@@ -80,8 +80,15 @@ const fadein = keyframes`
   }
 `
 
-const popRightOnHover = ({ isHovering }) => css`
-  ${isHovering ? 'transform: translateX(30px)' : ''}
+const staggeredFade = ({ position }) => css`
+  opacity: 0;
+  animation: ${fadein} 1200ms;
+  animation-delay: ${position * 100}ms;
+  animation-fill-mode: forwards;
+`
+
+const popRightAndScaleOnHover = ({ isHovering }) => css`
+  ${isHovering ? 'transform: translateX(30px) scale(1.25)' : ''}
 `
 
 const popRightOnPlay = ({ isPlaying }) => css`
@@ -92,12 +99,12 @@ const popRightOnPause = ({ isPaused }) => css`
   ${isPaused ? 'transform: translateX(70px)' : ''}
 `
 
-const staggeredFade = ({ position }) => css`
-  opacity: 0;
-  animation: ${fadein} 1200ms;
-  animation-delay: ${position * 100}ms;
-  animation-fill-mode: forwards;
-  transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
+const scaleOnPlay = ({ isPlaying }) => css`
+  ${isPlaying ? 'transform: scale(1.55)' : ''}
+`
+
+const scaleOnPause = ({ isPaused }) => css`
+  ${isPaused ? 'transform: scale(1.55)' : ''}
 `
 
 const TrackContainer = styled.div<{
@@ -118,10 +125,14 @@ const TrackContainer = styled.div<{
   cursor: pointer;
   user-select: none;
 
+  transition: transform 0.7s cubic-bezier(0.14, 0.97, 1, 1);
+
   ${staggeredFade}
-  ${popRightOnHover}
+  ${popRightAndScaleOnHover}
   ${popRightOnPlay}
   ${popRightOnPause}
+  ${scaleOnPlay}
+  ${scaleOnPause}
 `
 
 export default Track

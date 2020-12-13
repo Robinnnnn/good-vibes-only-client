@@ -20,103 +20,29 @@ const AlbumCover: React.FC<Props> = ({
   isPaused,
 }) => {
   return (
-    <Wrapper
+    <CoverContainer
       size={thumbnailSize}
-      isHovering={isHovering}
-      isPlaying={isPlaying}
-      isPaused={isPaused}
+      className='container'
+      position={position}
     >
-      <CoverContainer
-        size={thumbnailSize}
-        className='container'
-        position={position}
+      {/* slightly scales up the inner image to reduce width of outer "lip" */}
+      <_ImgScaler
+        isHovering={isHovering}
+        isPlaying={isPlaying}
+        isPaused={isPaused}
       >
-        {/* slightly scales up the inner image to reduce width of outer "lip" */}
-        <_ImgScaler
+        <Cover
+          src={imgUrl}
+          size={thumbnailSize}
           isHovering={isHovering}
           isPlaying={isPlaying}
           isPaused={isPaused}
-        >
-          <Cover className='pic' src={imgUrl} size={thumbnailSize} />
-        </_ImgScaler>
-        <Hole className='hole' />
-      </CoverContainer>
-    </Wrapper>
+        />
+      </_ImgScaler>
+      <Hole isHovering={isHovering} isPlaying={isPlaying} isPaused={isPaused} />
+    </CoverContainer>
   )
 }
-
-const spin = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`
-
-const standardSpin = css`
-  animation: ${spin} 8s linear infinite;
-`
-
-const slowSpin = css`
-  animation: ${spin} 8s linear infinite;
-`
-
-const activeHole = css`
-  .hole {
-    transform: scale(1);
-  }
-`
-
-const Wrapper = styled.div<{
-  isHovering: boolean
-  isPlaying: boolean
-  isPaused: boolean
-  size: number
-}>`
-  width: ${({ size }) => `${size}px`};
-  height: ${({ size }) => `${size}px`};
-
-  transform: scale(1);
-
-  transition: transform 0.7s cubic-bezier(0.14, 0.97, 1, 1);
-
-  ${({ isHovering, isPlaying, isPaused }) => {
-    if (isPlaying) {
-      return css`
-        .pic {
-          ${standardSpin}
-          filter: brightness(100%);
-        }
-
-        ${activeHole}
-      `
-    }
-
-    if (isPaused) {
-      return css`
-        .pic {
-          ${standardSpin}
-          /* give paused tracks an "inactive" look */
-          filter: brightness(80%);
-        }
-
-        ${activeHole}
-      `
-    }
-
-    if (isHovering) {
-      return css`
-        .pic {
-          ${slowSpin}
-          filter: brightness(100%);
-        }
-
-        ${activeHole}
-      `
-    }
-  }}
-`
 
 const _ImgScaler = styled.div<{
   isHovering: boolean
@@ -135,16 +61,12 @@ const _ImgScaler = styled.div<{
   `}
 `
 
-const fadein = keyframes`
+const rotateIn = keyframes`
   from {
-    opacity: 0;
-    transform: rotate(-180deg) scale(0.1);
-    margin-top: 20px;
+    transform: rotate(-180deg) scale(0.1) translateY(50px);
   }
   to {
-    opacity: 1;
-    transform: rotate(0deg) scale(1);
-    margin-top: 0px;
+    transform: rotate(0deg) scale(1) translateY(0px);
   }
 `
 
@@ -158,8 +80,7 @@ const CoverContainer = styled.div<{ size: number; position: number }>`
   align-items: center;
   cursor: pointer;
 
-  opacity: 0;
-  animation: ${fadein} 1200ms;
+  animation: ${rotateIn} 1200ms;
   animation-delay: ${({ position }) => `${position * 100}ms`};
   animation-fill-mode: forwards;
   animation-timing-function: cubic-bezier(0,1.39,.67,.98);
@@ -177,27 +98,63 @@ box-shadow:  14px 14px 26px #131313,
              -14px -14px 26px #4d4d4d; */
 }`
 
-const Cover = styled.img<{ size: number }>`
+const spin = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`
+
+const standardSpin = css`
+  animation: ${spin} 8s linear infinite;
+`
+
+const slowSpin = css`
+  animation: ${spin} 8s linear infinite;
+`
+
+const Cover = styled.img<{
+  size: number
+  isHovering: boolean
+  isPlaying: boolean
+  isPaused: boolean
+}>`
   position: absolute;
   border-radius: 100%;
   width: ${({ size }) => `${size - 8}px`};
   height: ${({ size }) => `${size - 8}px`};
-  filter: brightness(80%);
 
-  transition: filter 0.6s cubic-bezier(0.14, 0.97, 1, 1);
+  filter: ${({ isHovering, isPlaying }) => `
+    brightness(${isPlaying ? 100 : isHovering ? 93 : 80}%)
+  `};
+  transition: filter 0.8s cubic-bezier(0.14, 0.97, 1, 1);
+
+  ${({ isHovering, isPlaying, isPaused }) => {
+    if (isHovering) return slowSpin
+    if (isPlaying || isPaused) return standardSpin
+  }};
 `
 
-const Hole = styled.div`
+const Hole = styled.div<{
+  isHovering: boolean
+  isPlaying: boolean
+  isPaused: boolean
+}>`
   position: absolute;
   background: white;
   width: 11px;
   height: 11px;
   border-radius: 100%;
+  box-shadow: inset 2px 2px 2px 1px #e5e5e5;
 
   transition: transform 0.2s ease-in;
   transform: scale(0);
 
-  box-shadow: inset 2px 2px 2px 1px #e5e5e5;
+  transform: ${({ isHovering, isPlaying, isPaused }) => `
+    scale(${isHovering || isPlaying || isPaused ? 1 : 0})
+  `};
 `
 
 export default AlbumCover

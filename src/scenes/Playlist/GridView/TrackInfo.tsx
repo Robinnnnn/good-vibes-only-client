@@ -97,9 +97,14 @@ const TrackInfoContainer = styled.div<{
   }}
 `
 
-const liftOnActive = ({ isHovering, isPlaying, isPaused }) => css`
-  ${isHovering || isPlaying || isPaused ? 'transform: translateY(-10px)' : ''}
-`
+const liftTitle = ({ isHovering, isPlaying, isPaused }) => {
+  if (isPlaying) return ''
+  if (isHovering || isPaused) {
+    return css`
+      transform: translateY(-10px);
+    `
+  }
+}
 
 const TitleContainer = styled.div<{
   position: number
@@ -124,14 +129,31 @@ const TitleContainer = styled.div<{
   animation-fill-mode: forwards;
 
   transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
-  ${liftOnActive}
+  ${liftTitle}
 `
+
+const liftArtist = ({ isHovering, isPlaying, isPaused }) => {
+  if (isPlaying)
+    return css`
+      top: 30px;
+    `
+  if (isHovering || isPaused) {
+    return css`
+      top: 20px;
+    `
+  }
+}
 
 const ArtistContainer = styled.div<{
   isHovering: boolean
   isPlaying: boolean
   isPaused: boolean
 }>`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+
   margin-top: 4px;
   font-size: 12px;
   text-transform: lowercase;
@@ -140,15 +162,11 @@ const ArtistContainer = styled.div<{
   top: 10px;
   width: 100%;
 
-  opacity: 0;
   transition: 0.5s cubic-bezier(0.14, 0.97, 1, 1);
-  ${({ isHovering, isPlaying, isPaused }) =>
-    isHovering || isPlaying || isPaused
-      ? css`
-          opacity: 1;
-          top: 20px;
-        `
-      : ''}
+
+  opacity: ${({ isHovering, isPlaying, isPaused }) =>
+    isHovering || isPlaying || isPaused ? 1 : 0};
+  ${liftArtist}
 `
 
 export default TrackInfo

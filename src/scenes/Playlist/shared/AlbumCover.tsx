@@ -25,6 +25,7 @@ const AlbumCover: React.FC<Props> = ({
         size={thumbnailSize}
         className='container'
         position={position}
+        isPlaying={isPlaying}
       >
         {/* slightly scales up the inner image to reduce width of outer "lip" */}
         <_ImgScaler
@@ -64,7 +65,7 @@ const liftAndScaleOnHover = ({ isHovering }) => css`
 `
 
 const scaleOnPlay = ({ isPlaying }) => css`
-  ${isPlaying ? 'transform: translateY(-15px) scale(1.3)' : ''}
+  ${isPlaying ? 'transform: translateY(-25px) scale(1.55)' : ''}
 `
 
 const scaleOnPause = ({ isPaused }) => css`
@@ -85,6 +86,7 @@ const _Scale = styled.div<{
 const CoverContainer = styled.div<{
   size: number
   position: number
+  isPlaying: boolean
 }>`
   width: ${({ size }) => `${size}px`};
   height: ${({ size }) => `${size}px`};
@@ -102,14 +104,18 @@ const CoverContainer = styled.div<{
 
   /* neumorphism */
   background: #ffffff;
-box-shadow:  12px 12px 24px #d1d1d1, 
-             -12px -12px 24px #ffffff;
+  box-shadow:  12px 12px 24px #d1d1d1;
+
+  transition: 0.3s cubic-bezier(0.14, 0.97, 1, 1);
+
+  ${({ isPlaying }) => (isPlaying ? `box-shadow: 5px 5px 12px #ceafff` : '')};
+  
   /* background: #f6e9ff;
   box-shadow: 2px 2px 3px #d6cbde, -2px -2px 3px #ffffff; */
  
   /* dark mode */
- /* background: #303030;
-box-shadow:  14px 14px 26px #131313, 
+  /* background: #303030;
+  box-shadow:  14px 14px 26px #131313, 
              -14px -14px 26px #4d4d4d; */
 }`
 

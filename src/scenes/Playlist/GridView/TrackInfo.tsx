@@ -48,13 +48,15 @@ const TrackInfo: React.FC<Props> = ({
   )
 }
 
+const textHeight = 21
+
 const reveal = keyframes`
   from {
     height: 0px;
     opacity: 0;
   }
   to {
-    height: 21px;
+    height: ${textHeight}px;
     opacity: 1;
   }
 `
@@ -65,6 +67,7 @@ const TrackInfoContainer = styled.div<{
   isPlaying: boolean
 }>`
   width: 100px;
+  height: ${textHeight}px;
 
   padding-top: 10px;
 

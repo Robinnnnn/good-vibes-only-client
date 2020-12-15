@@ -5,6 +5,8 @@ import { css, keyframes } from '@emotion/core'
 import AnimatedText from '../shared/AnimatedText'
 import { AnimatedValue } from 'react-spring'
 
+import BlurEdges, { BLUR_LEVEL } from '../../../shared/BlurEdges'
+
 type Props = {
   data: SpotifyApi.TrackObjectFull
   position: number
@@ -35,7 +37,15 @@ const TrackInfo: React.FC<Props> = ({
         isPaused={isPaused}
         isPlaying={isPlaying}
       >
-        <AnimatedText text={data.name} progress={progress} />
+        <BlurEdges
+          leftActive={isPlaying}
+          rightActive
+          blurLevel={BLUR_LEVEL.MEDIUM}
+        >
+          <_Marquee isPlaying={isPlaying}>
+            <AnimatedText text={data.name} progress={progress} />
+          </_Marquee>
+        </BlurEdges>
       </TitleContainer>
       <ArtistContainer
         isHovering={isHovering}
@@ -66,7 +76,7 @@ const TrackInfoContainer = styled.div<{
   isPaused: boolean
   isPlaying: boolean
 }>`
-  width: 100px;
+  width: 120px;
   height: ${textHeight}px;
 
   padding-top: 10px;
@@ -109,16 +119,32 @@ const liftTitle = ({ isHovering, isPlaying, isPaused }) => {
   }
 }
 
+const marquee = keyframes`
+    from {
+        transform: translateX(0%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+`
+
+const _Marquee = styled.div<{ isPlaying: boolean }>`
+  width: max-content;
+  animation: ${({ isPlaying }) =>
+    isPlaying
+      ? css`
+          ${marquee} 20000ms linear infinite
+        `
+      : ''};
+`
+
 const TitleContainer = styled.div<{
   position: number
   isHovering: boolean
   isPlaying: boolean
   isPaused: boolean
 }>`
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100px;
 
   text-transform: lowercase;
   font-weight: 800;

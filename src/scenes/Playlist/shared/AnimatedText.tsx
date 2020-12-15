@@ -91,9 +91,11 @@ const AnimatedText: React.FC<Props> = ({ text, progress }) => {
     }
   }, [])
 
+  const doubleText = `${text}          ${text}`
+
   return (
     <animated.div style={animatedParentStyles}>
-      <div style={animatedChildStyles}>{text}</div>
+      <div style={animatedChildStyles}>{doubleText}</div>
     </animated.div>
   )
 }

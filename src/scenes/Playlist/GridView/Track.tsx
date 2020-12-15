@@ -94,10 +94,10 @@ const TrackContainer = styled.div<{
   isPlaying: boolean
   isPaused: boolean
 }>`
-  margin: 20px;
   width: 140px;
 
-  padding: 0px;
+  /* ensures hover effects take place even when cursor is "in between" elements */
+  padding: 20px;
 
   display: flex;
   justify-content: center;

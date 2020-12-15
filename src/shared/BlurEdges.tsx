@@ -10,6 +10,7 @@ export enum BLUR_LEVEL {
 type Props = {
   leftActive?: boolean
   rightActive?: boolean
+  backgroundColor?: string
   blurLevel?: BLUR_LEVEL
   zIndex?: number
 }
@@ -18,6 +19,7 @@ const BlurEdges: React.FC<Props> = ({
   leftActive = true,
   rightActive = true,
   zIndex = 1,
+  backgroundColor = '#ffffff',
   blurLevel = BLUR_LEVEL.MEDIUM,
   children,
 }) => {
@@ -26,6 +28,7 @@ const BlurEdges: React.FC<Props> = ({
       <Overlay
         leftActive={leftActive}
         rightActive={rightActive}
+        backgroundColor={backgroundColor}
         blurLevel={blurLevel}
         zIndex={zIndex}
       />
@@ -41,6 +44,7 @@ const BlurContainer = styled.div`
 const Overlay = styled.span<{
   leftActive: boolean
   rightActive: boolean
+  backgroundColor: string
   blurLevel: number
   zIndex: number
 }>`
@@ -50,10 +54,14 @@ const Overlay = styled.span<{
   height: 100%;
   background: linear-gradient(
     to right,
-    ${({ leftActive }) => (leftActive ? '#ffffff' : 'transparent')} 0%,
+    ${({ leftActive, backgroundColor }) =>
+        leftActive ? backgroundColor : 'transparent'}
+      0%,
     ${({ blurLevel }) => `transparent ${blurLevel}%`},
     ${({ blurLevel }) => `transparent ${100 - blurLevel}%`},
-    ${({ rightActive }) => (rightActive ? '#ffffff' : 'transparent')} 100%
+    ${({ rightActive, backgroundColor }) =>
+        rightActive ? backgroundColor : 'transparent'}
+      100%
   );
   z-index: ${({ zIndex }) => zIndex};
 `

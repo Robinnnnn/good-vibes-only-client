@@ -112,10 +112,7 @@ export const PlaybackProvider: React.FC<Props> = ({
   )
 
   const { sdk } = useSpotifyState()
-  const contextUri = React.useMemo(() => context?.uri || playlistUri, [
-    context,
-    playlistUri,
-  ])
+
   const playPauseTrack = React.useCallback(
     (track: SpotifyApi.TrackObjectFull) => {
       setOptimisticUpdateInProgress(true)
@@ -131,7 +128,7 @@ export const PlaybackProvider: React.FC<Props> = ({
       const shouldResume = trackIsSelected && !isPlaying
       const playOptions: SpotifyApi.PlayParameterObject = {
         // playlist URI
-        context_uri: contextUri,
+        context_uri: playlistUri,
         // track URI
         offset: { uri: track.uri },
         // either resume track or start from beginning
@@ -141,7 +138,7 @@ export const PlaybackProvider: React.FC<Props> = ({
       setIsPlaying(true)
       setSelectedTrack(track)
     },
-    [contextUri, isPlaying, isSelectedTrack, progressMs, sdk]
+    [isPlaying, isSelectedTrack, playlistUri, progressMs, sdk]
   )
 
   // console.log({

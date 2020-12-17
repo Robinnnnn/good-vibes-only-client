@@ -19,15 +19,13 @@ const AlbumCover: React.FC<Props> = ({
 }) => {
   return (
     <Wrapper isHovering={isHovering} isPlaying={isPlaying} isPaused={isPaused}>
-      <CoverFlipWrapper className='pic-flip-wrapper'>
-        <CoverContainer className='container' position={position}>
-          {/* scales slightly up to reduce width of border */}
-          <CoverScaleWrapper className='pic-scale-wrapper'>
-            <Cover className='pic' src={imgUrl} />
-          </CoverScaleWrapper>
-          <Hole className='hole' />
-        </CoverContainer>
-      </CoverFlipWrapper>
+      <CoverContainer className='container' position={position}>
+        {/* scales slightly up to reduce width of border */}
+        <CoverScaleWrapper className='pic-scale-wrapper'>
+          <Cover className='pic' src={imgUrl} />
+        </CoverScaleWrapper>
+        <Hole className='hole' />
+      </CoverContainer>
     </Wrapper>
   )
 }
@@ -101,7 +99,7 @@ const Wrapper = styled.div<{
 
     if (isHovering) {
       return css`
-        transform: scale(1.25) translateX(30px);
+        transform: scale(1.25);
 
         .pic-scale-wrapper {
           transform: scale(1.03);
@@ -118,14 +116,6 @@ const Wrapper = styled.div<{
       `
     }
   }}
-`
-
-const CoverFlipWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
 `
 
 const CoverScaleWrapper = styled.div`

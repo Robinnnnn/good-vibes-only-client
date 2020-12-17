@@ -1,13 +1,13 @@
 import React from 'react'
-import { keyframes } from '@emotion/core'
+import { css, keyframes } from '@emotion/core'
 import styled from '@emotion/styled'
-import AlbumCover from './AlbumCover'
-import TrackInfo from './TrackInfo'
-import { useAnimatedProgress } from './AnimatedText'
 import {
   usePlaybackActions,
   usePlaybackState,
-} from '../../contexts/Spotify/PlaybackContext/PlaybackContext'
+} from '../../../contexts/Spotify/PlaybackContext/PlaybackContext'
+import { useAnimatedProgress } from '../shared/AnimatedText'
+import AlbumCover from '../shared/AlbumCover'
+import TrackInfo from './TrackInfo'
 
 type Props = {
   position: number
@@ -30,12 +30,12 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
   const handleMouseOver = React.useCallback(() => {
     enableHover()
     animateText()
-  }, [enableHover, animateText])
+  }, [animateText, enableHover])
 
   const handleMouseLeave = React.useCallback(() => {
     disableHover()
     deanimateText()
-  }, [disableHover, deanimateText])
+  }, [deanimateText, disableHover])
 
   const handlePlayPause = React.useCallback(() => {
     playPauseTrack(track)
@@ -44,6 +44,9 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
   return (
     <TrackContainer
       position={position}
+      isHovering={isHovering}
+      isPlaying={isPlaying}
+      isPaused={isPaused}
       className='track'
       onMouseOver={handleMouseOver}
       onMouseLeave={handleMouseLeave}
@@ -51,6 +54,7 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
     >
       <AlbumCover
         position={position}
+        thumbnailSize={100}
         imgUrl={track.album.images[0].url}
         isHovering={isHovering}
         isPlaying={isPlaying}
@@ -77,24 +81,36 @@ const fadein = keyframes`
   }
 `
 
-const TrackContainer = styled.div<{ position: number }>`
-  position: absolute;
-  width: 500px;
+const staggeredFade = ({ position }) => css`
+  opacity: 0;
+  animation: ${fadein} 1200ms;
+  animation-delay: ${position * 50}ms;
+  animation-fill-mode: forwards;
+`
+
+const TrackContainer = styled.div<{
+  position: number
+  isHovering: boolean
+  isPlaying: boolean
+  isPaused: boolean
+}>`
+  width: 140px;
+
+  /* ensures hover effects take place even when cursor is "in between" elements */
+  padding: 20px;
 
   display: flex;
-  justify-content: left;
+  justify-content: center;
   align-items: center;
 
-  height: 128px;
+  flex-direction: column;
 
   cursor: pointer;
   user-select: none;
 
-  opacity: 0;
-  animation: ${fadein} 1200ms;
-  animation-delay: ${({ position }) => `${position * 100}ms`};
-  animation-fill-mode: forwards;
-
   transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
+
+  ${staggeredFade}
 `
+
 export default Track

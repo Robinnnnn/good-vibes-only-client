@@ -1,6 +1,6 @@
 import React from 'react'
 import { animated, AnimatedValue, useSpring } from 'react-spring'
-import { SECOND } from '../../util/time'
+import { SECOND } from '../../../util/time'
 
 // my playground: https://codesandbox.io/s/color-rotation-73c7f?file=/src/index.js
 
@@ -91,9 +91,11 @@ const AnimatedText: React.FC<Props> = ({ text, progress }) => {
     }
   }, [])
 
+  const doubleText = `${text}          ${text}`
+
   return (
     <animated.div style={animatedParentStyles}>
-      <div style={animatedChildStyles}>{text}</div>
+      <div style={animatedChildStyles}>{doubleText}</div>
     </animated.div>
   )
 }

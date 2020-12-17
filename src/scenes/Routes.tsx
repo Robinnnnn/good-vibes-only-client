@@ -23,7 +23,7 @@ const Routes: React.FC = () => {
     <AuthenticatedSpotifySWRProvider>
       <Suspense fallback={<div>SUSPENSE FALLBACK</div>}>
         <Router>
-          <Playlist path='playlist/:id' />
+          <Playlist path='playlist/:idOrSpotifyLink' />
           <NotFound path='404' />
           <Redirect noThrow from='/' to='/playlist/4pk1t6L5553jk5NDHdeQrD' />
           <Redirect

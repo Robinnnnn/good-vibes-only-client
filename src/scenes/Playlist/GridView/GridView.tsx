@@ -10,7 +10,7 @@ const GridView: React.FC<Props> = ({ data }) => {
   return (
     <GridContainer>
       {data.tracks.items.map(({ track }, index) => (
-        <Track position={index} data={track} />
+        <Track key={track.id} position={index} data={track} />
       ))}
     </GridContainer>
   )

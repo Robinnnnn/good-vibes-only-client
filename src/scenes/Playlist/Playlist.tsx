@@ -7,12 +7,17 @@ import { PlaybackProvider } from '../../contexts/Spotify/PlaybackContext/Playbac
 import ListView from './ListView/ListView'
 import GridView from './GridView/GridView'
 import { navigate } from '@reach/router'
+import { ImageLoaderProvider } from '../../contexts/ImageLoader/ImageLoaderContext'
 
 /**
  * Matches the 22-char Spotify ID out of the following strings:
+ *
  * - https://open.spotify.com/playlist/37i9dQZF1DX0A8zVl7p82B?si=l1xTw-wbR9G9a3SZxPowxw
+ *                                     ^^^^^^^^^^^^^^^^^^^^^^
  * - spotify:playlist:37i9dQZF1DX0A8zVl7p82B
+ *                    ^^^^^^^^^^^^^^^^^^^^^^
  * - 37i9dQZF1DX0A8zVl7p82B
+ *   ^^^^^^^^^^^^^^^^^^^^^^
  */
 function processPlaylistId(id: string): string | undefined {
   return id.match(/(playlist(\/|:))?([a-zA-Z0-9]{22})/)?.[3]
@@ -43,11 +48,17 @@ const Playlist: React.FC<RouteComponentProps<{ idOrSpotifyLink: string }>> = ({
     navigate(`/playlist/${playlistId}`, { replace: true })
 
   return (
-    <PlaybackProvider playlistUri={data.uri}>
-      <PlaylistContainer>
-        {view === 'list' ? <ListView data={data} /> : <GridView data={data} />}
-      </PlaylistContainer>
-    </PlaybackProvider>
+    <ImageLoaderProvider>
+      <PlaybackProvider playlistUri={data.uri}>
+        <PlaylistContainer>
+          {view === 'list' ? (
+            <ListView data={data} />
+          ) : (
+            <GridView data={data} />
+          )}
+        </PlaylistContainer>
+      </PlaybackProvider>
+    </ImageLoaderProvider>
   )
 }
 

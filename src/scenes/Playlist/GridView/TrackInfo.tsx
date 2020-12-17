@@ -38,11 +38,15 @@ const TrackInfo: React.FC<Props> = ({
         isPlaying={isPlaying}
       >
         <BlurEdges
-          leftActive={isPlaying}
+          leftActive={isHovering || isPaused || isPlaying}
           rightActive
           blurLevel={BLUR_LEVEL.MEDIUM}
         >
-          <_Marquee isPlaying={isPlaying}>
+          <_Marquee
+            isHovering={isHovering}
+            isPaused={isPaused}
+            isPlaying={isPlaying}
+          >
             <AnimatedText text={data.name} progress={progress} />
           </_Marquee>
         </BlurEdges>
@@ -88,33 +92,16 @@ const TrackInfoContainer = styled.div<{
 
   transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
   opacity: 0.95;
-
-  ${({ isHovering, isPlaying, isPaused }) => {
-    // if (isPlaying) {
-    //   return css`
-    //     transform: translateX(160px);
-    //     opacity: 1;
-    //   `
-    // }
-    // if (isPaused) {
-    //   return css`
-    //     transform: translateX(160px);
-    //   `
-    // }
-    // if (isHovering) {
-    //   return css`
-    //     transform: translateX(70px);
-    //     opacity: 1;
-    //   `
-    // }
-  }}
 `
 
 const liftTitle = ({ isHovering, isPlaying, isPaused }) => {
-  if (isPlaying) return ''
+  if (isPlaying)
+    return css`
+      transform: translateY(4px);
+    `
   if (isHovering || isPaused) {
     return css`
-      transform: translateY(-10px);
+      transform: translateY(-6px);
     `
   }
 }
@@ -128,10 +115,14 @@ const marquee = keyframes`
     }
 `
 
-const _Marquee = styled.div<{ isPlaying: boolean }>`
+const _Marquee = styled.div<{
+  isHovering: boolean
+  isPlaying: boolean
+  isPaused: boolean
+}>`
   width: max-content;
-  animation: ${({ isPlaying }) =>
-    isPlaying
+  animation: ${({ isHovering, isPlaying, isPaused }) =>
+    isHovering || isPlaying || isPaused
       ? css`
           ${marquee} 20000ms linear infinite
         `
@@ -148,6 +139,7 @@ const TitleContainer = styled.div<{
 
   text-transform: lowercase;
   font-weight: 800;
+  font-size: 14px;
 
   /* initial animation state */
   height: 0px;

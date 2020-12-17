@@ -30,12 +30,12 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
   const handleMouseOver = React.useCallback(() => {
     enableHover()
     animateText()
-  }, [enableHover])
+  }, [animateText, enableHover])
 
   const handleMouseLeave = React.useCallback(() => {
     disableHover()
     deanimateText()
-  }, [disableHover])
+  }, [deanimateText, disableHover])
 
   const handlePlayPause = React.useCallback(() => {
     playPauseTrack(track)

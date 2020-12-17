@@ -10,13 +10,12 @@ const ImageLoaderContext = React.createContext<ImageLoaderActions | undefined>(
 
 type Props = {
   src: string
-  alt?: string
+  Component?: React.FC
 }
 
 export const ImageWithSuspense: React.FC<Props> = ({
   src,
-  alt = '',
-  ...rest
+  Component = () => <img alt={src} src={src} />,
 }) => {
   const context = React.useContext(ImageLoaderContext)
   if (!context) {
@@ -26,7 +25,7 @@ export const ImageWithSuspense: React.FC<Props> = ({
   // suspends while image is loaded
   context.read(src)
 
-  return <img alt={alt} src={src} {...rest} />
+  return <Component />
 }
 
 const MAX_WAIT_TIME = 5000

@@ -10,22 +10,16 @@ const ImageLoaderContext = React.createContext<ImageLoaderActions | undefined>(
 
 type Props = {
   src: string
-  Component?: React.FC
+  Component?: React.ReactNode
 }
 
-export const ImageWithSuspense: React.FC<Props> = ({
+export const ImageWithSuspense = ({
   src,
-  Component = () => <img alt={src} src={src} />,
-}) => {
-  const context = React.useContext(ImageLoaderContext)
-  if (!context) {
-    throw Error('Attempted to use Image Loader Context without a provder!')
-  }
-
-  // suspends while image is loaded
-  context.read(src)
-
-  return <Component />
+  Component,
+}: Props): React.ReactNode => {
+  const { read } = React.useContext(ImageLoaderContext)
+  read(src) // suspends while image is loaded
+  return Component
 }
 
 const MAX_WAIT_TIME = 5000
@@ -50,6 +44,7 @@ export const ImageLoaderProvider: React.FC = ({ children }) => {
       }
     })
       .then(() => (cache.current[src] = true))
+      // resolve anyway, users can deal with errors lol
       .catch(() => (cache.current[src] = true))
 
     cache.current[src] = promise

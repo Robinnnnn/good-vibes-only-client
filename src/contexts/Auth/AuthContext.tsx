@@ -194,9 +194,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     [setLoggedIn, setLoggedOutState]
   )
 
-  return authState === UnknownState || authState === LoadingState ? (
-    <Loading />
-  ) : (
+  return authState === UnknownState || authState === LoadingState ? null : (
     <AuthStateContext.Provider value={authState}>
       <AuthTokenContext.Provider value={authTokens}>
         <AuthActionContext.Provider value={authActions}>

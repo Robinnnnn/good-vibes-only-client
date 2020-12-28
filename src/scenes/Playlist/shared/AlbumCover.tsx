@@ -34,7 +34,6 @@ const AlbumCover: React.FC<Props> = ({
           isPlaying={isPlaying}
           isPaused={isPaused}
         >
-          {/* TODO: fix weird JSX error */}
           <ImageWithSuspense
             src={imgUrl}
             Component={

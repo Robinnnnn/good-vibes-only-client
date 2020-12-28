@@ -10,16 +10,14 @@ const ImageLoaderContext = React.createContext<ImageLoaderActions | undefined>(
 
 type Props = {
   src: string
-  Component?: React.ReactNode
+  Component?: React.ReactElement
 }
 
-export const ImageWithSuspense = React.memo(
-  ({ src, Component }: Props): React.ReactNode => {
-    const { read } = React.useContext(ImageLoaderContext)
-    read(src) // suspends while image is loaded
-    return Component
-  }
-)
+export const ImageWithSuspense = React.memo(({ src, Component }: Props) => {
+  const { read } = React.useContext(ImageLoaderContext)
+  read(src) // suspends while image is loaded
+  return Component
+})
 
 const MAX_WAIT_TIME = 5000
 

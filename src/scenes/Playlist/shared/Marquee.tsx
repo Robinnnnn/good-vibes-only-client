@@ -1,3 +1,6 @@
+/**
+ * proof of concept: https://codesandbox.io/s/text-carousel-with-requestanimationframe-jz214
+ */
 import React from 'react'
 import styled from '@emotion/styled'
 
@@ -10,7 +13,6 @@ type Props = {
   speed: SCROLL_SPEED
 }
 
-// https://codesandbox.io/s/text-carousel-forked-jz214?file=/src/App.js
 const Marquee: React.FC<Props> = ({ children, speed }) => {
   // ref for HTML element that we'll be moving
   const marquee = React.useRef<HTMLDivElement | null>(null)

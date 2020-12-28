@@ -1,8 +1,9 @@
+/**
+ * proof of concept: https://codesandbox.io/s/color-rotation-73c7f?file=/src/index.js
+ */
 import React from 'react'
 import { animated, AnimatedValue, useSpring } from 'react-spring'
 import { SECOND } from '../../../util/time'
-
-// my playground: https://codesandbox.io/s/color-rotation-73c7f?file=/src/index.js
 
 export const useAnimatedProgress = () => {
   // @ts-expect-error: `progress` is not a valid CSS param

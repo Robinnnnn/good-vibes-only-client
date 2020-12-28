@@ -38,7 +38,7 @@ export const useErrorActions = (): ErrorActions => {
   return context
 }
 
-export const ErrorProvider: React.FC = ({ children }) => {
+export const ErrorProvider: React.FC = React.memo(({ children }) => {
   const [errorState, setErrorState] = React.useState<ErrorState>(OK)
 
   const setApplicationError = React.useCallback(
@@ -75,4 +75,4 @@ export const ErrorProvider: React.FC = ({ children }) => {
       </ErrorActionContext.Provider>
     </ErrorStateContext.Provider>
   )
-}
+})

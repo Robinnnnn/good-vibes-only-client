@@ -66,4 +66,4 @@ const Overlay = styled.span<{
   z-index: ${({ zIndex }) => zIndex};
 `
 
-export default BlurEdges
+export default React.memo(BlurEdges)

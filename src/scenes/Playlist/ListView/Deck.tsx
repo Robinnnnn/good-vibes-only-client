@@ -49,4 +49,4 @@ const DeckContainer = styled.div`
   padding-right: 30px;
 `
 
-export default Deck
+export default React.memo(Deck)

@@ -113,4 +113,4 @@ const TrackContainer = styled.div<{
   ${staggeredFade}
 `
 
-export default Track
+export default React.memo(Track)

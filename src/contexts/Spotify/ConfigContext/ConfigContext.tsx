@@ -61,7 +61,7 @@ export const useSpotifyActions = (): SpotifyActions => {
   return context
 }
 
-export const SpotifyProvider: React.FC = ({ children }) => {
+export const SpotifyProvider: React.FC = React.memo(({ children }) => {
   const [spotifyState, setSpotifyState] = React.useState<
     SpotifyState | undefined
   >(undefined)
@@ -123,4 +123,4 @@ export const SpotifyProvider: React.FC = ({ children }) => {
       </SpotifyActionContext.Provider>
     </SpotifyStateContext.Provider>
   )
-}
+})

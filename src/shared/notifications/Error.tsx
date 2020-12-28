@@ -18,4 +18,4 @@ const NotificationContainer = styled.div`
   margin-top: 100px;
 `
 
-export default ErrorNotification
+export default React.memo(ErrorNotification)

@@ -102,4 +102,4 @@ const ArtistContainer = styled.div`
   text-transform: lowercase;
 `
 
-export default TrackInfo
+export default React.memo(TrackInfo)

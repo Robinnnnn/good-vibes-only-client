@@ -24,4 +24,4 @@ const GridContainer = styled.div`
   justify-content: center;
 `
 
-export default GridView
+export default React.memo(GridView)

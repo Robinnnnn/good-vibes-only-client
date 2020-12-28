@@ -25,4 +25,4 @@ const StyledContainer = styled.div`
   /* background: #303030; */
 `
 
-export default App
+export default React.memo(App)

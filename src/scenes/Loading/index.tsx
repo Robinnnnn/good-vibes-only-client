@@ -20,4 +20,4 @@ const LoadingScene = styled.div`
   height: 100vh;
 `
 
-export default Loading
+export default React.memo(Loading)

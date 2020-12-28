@@ -5,7 +5,7 @@ import { css, keyframes } from '@emotion/core'
 import AnimatedText from '../shared/AnimatedText'
 import { AnimatedValue } from 'react-spring'
 
-import BlurEdges, { BLUR_LEVEL } from '../../../shared/BlurEdges'
+import BlurEdges, { BLUR_LEVEL } from '../shared/BlurEdges'
 import Marquee, { SCROLL_SPEED } from '../shared/Marquee'
 
 type Props = {

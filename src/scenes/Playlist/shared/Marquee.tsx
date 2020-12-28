@@ -86,4 +86,4 @@ const Content = styled.div`
   width: max-content;
 `
 
-export default Marquee
+export default React.memo(Marquee)

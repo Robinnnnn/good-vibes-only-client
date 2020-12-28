@@ -13,18 +13,17 @@ type Props = {
   Component?: React.ReactNode
 }
 
-export const ImageWithSuspense = ({
-  src,
-  Component,
-}: Props): React.ReactNode => {
-  const { read } = React.useContext(ImageLoaderContext)
-  read(src) // suspends while image is loaded
-  return Component
-}
+export const ImageWithSuspense = React.memo(
+  ({ src, Component }: Props): React.ReactNode => {
+    const { read } = React.useContext(ImageLoaderContext)
+    read(src) // suspends while image is loaded
+    return Component
+  }
+)
 
 const MAX_WAIT_TIME = 5000
 
-export const ImageLoaderProvider: React.FC = ({ children }) => {
+export const ImageLoaderProvider: React.FC = React.memo(({ children }) => {
   // a map to look up the load status for each image
   const cache = React.useRef<{ [url: string]: Promise<boolean> | boolean }>({})
 
@@ -76,4 +75,4 @@ export const ImageLoaderProvider: React.FC = ({ children }) => {
       {children}
     </ImageLoaderContext.Provider>
   )
-}
+})

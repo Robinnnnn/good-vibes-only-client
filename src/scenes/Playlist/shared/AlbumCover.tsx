@@ -202,4 +202,4 @@ const Hole = styled.div<{
   `};
 `
 
-export default AlbumCover
+export default React.memo(AlbumCover)

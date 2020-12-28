@@ -156,4 +156,4 @@ const TrackContainer = styled.div<{
   ${scaleOnPause}
 `
 
-export default Track
+export default React.memo(Track)

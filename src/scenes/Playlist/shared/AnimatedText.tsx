@@ -79,6 +79,7 @@ const AnimatedText: React.FC<Props> = ({ text, progress }) => {
       // even though the div should technically be invisible, the text
       // appears black without this property
       WebkitTextFillColor: 'transparent',
+      display: 'flex',
     }
   }, [progress])
 
@@ -88,14 +89,14 @@ const AnimatedText: React.FC<Props> = ({ text, progress }) => {
       visibility: 'visible' as 'visible',
       background: 'inherit',
       WebkitBackgroundClip: 'text',
+      width: '120px',
     }
   }, [])
 
-  const doubleText = `${text}          ${text}`
-
   return (
     <animated.div style={animatedParentStyles}>
-      <div style={animatedChildStyles}>{doubleText}</div>
+      <div style={animatedChildStyles}>{text}</div>
+      <div style={animatedChildStyles}>{text}</div>
     </animated.div>
   )
 }

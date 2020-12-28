@@ -13,7 +13,7 @@ type Props = {
   speed: SCROLL_SPEED
 }
 
-const Marquee: React.FC<Props> = ({ children, speed }) => {
+const Marquee: React.FC<Props> = React.memo(({ children, speed }) => {
   // ref for HTML element that we'll be moving
   const marquee = React.useRef<HTMLDivElement | null>(null)
 
@@ -80,10 +80,10 @@ const Marquee: React.FC<Props> = ({ children, speed }) => {
   }, [speed])
 
   return <Content ref={marquee}>{children}</Content>
-}
+})
 
 const Content = styled.div`
   width: max-content;
 `
 
-export default React.memo(Marquee)
+export default Marquee

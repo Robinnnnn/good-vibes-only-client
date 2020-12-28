@@ -15,27 +15,29 @@ type Props = {
   zIndex?: number
 }
 
-const BlurEdges: React.FC<Props> = ({
-  leftActive = true,
-  rightActive = true,
-  zIndex = 1,
-  backgroundColor = '#ffffff',
-  blurLevel = BLUR_LEVEL.MEDIUM,
-  children,
-}) => {
-  return (
-    <BlurContainer>
-      <Overlay
-        leftActive={leftActive}
-        rightActive={rightActive}
-        backgroundColor={backgroundColor}
-        blurLevel={blurLevel}
-        zIndex={zIndex}
-      />
-      {children}
-    </BlurContainer>
-  )
-}
+const BlurEdges: React.FC<Props> = React.memo(
+  ({
+    leftActive = true,
+    rightActive = true,
+    zIndex = 1,
+    backgroundColor = '#ffffff',
+    blurLevel = BLUR_LEVEL.MEDIUM,
+    children,
+  }) => {
+    return (
+      <BlurContainer>
+        <Overlay
+          leftActive={leftActive}
+          rightActive={rightActive}
+          backgroundColor={backgroundColor}
+          blurLevel={blurLevel}
+          zIndex={zIndex}
+        />
+        {children}
+      </BlurContainer>
+    )
+  }
+)
 
 const BlurContainer = styled.div`
   position: relative;
@@ -66,4 +68,4 @@ const Overlay = styled.span<{
   z-index: ${({ zIndex }) => zIndex};
 `
 
-export default React.memo(BlurEdges)
+export default BlurEdges

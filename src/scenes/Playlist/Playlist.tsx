@@ -66,4 +66,4 @@ const PlaylistContainer = styled.div`
   padding: 80px 200px;
 `
 
-export default Playlist
+export default React.memo(Playlist)

@@ -86,7 +86,7 @@ export const useAuthActions = (): AuthActions => {
 /**
  * Putting it all together in AuthProvider
  */
-export const AuthProvider: React.FC = ({ children }) => {
+export const AuthProvider: React.FC = React.memo(({ children }) => {
   const [authState, setAuthState] = React.useState<AuthState>(UnknownState)
   const [authTokens, setAuthTokens] = usePersistedState(
     'authTokens',
@@ -203,4 +203,4 @@ export const AuthProvider: React.FC = ({ children }) => {
       </AuthTokenContext.Provider>
     </AuthStateContext.Provider>
   )
-}
+})

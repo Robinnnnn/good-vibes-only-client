@@ -42,4 +42,4 @@ const Button = styled.a`
   }
 `
 
-export default Login
+export default React.memo(Login)

@@ -192,4 +192,4 @@ const Hole = styled.div`
   box-shadow: inset 2px 2px 2px 1px #e5e5e5;
 `
 
-export default AlbumCover
+export default React.memo(AlbumCover)

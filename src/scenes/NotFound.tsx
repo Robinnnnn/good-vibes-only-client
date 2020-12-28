@@ -3,4 +3,4 @@ import { RouteComponentProps } from '@reach/router'
 
 const NotFound: React.FC<RouteComponentProps> = () => <div>not found</div>
 
-export default NotFound
+export default React.memo(NotFound)

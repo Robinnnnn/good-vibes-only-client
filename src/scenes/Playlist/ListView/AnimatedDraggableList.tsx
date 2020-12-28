@@ -108,4 +108,4 @@ const AnimatedDraggableList = ({
   )
 }
 
-export default AnimatedDraggableList
+export default React.memo(AnimatedDraggableList)

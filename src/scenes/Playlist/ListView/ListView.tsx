@@ -61,4 +61,4 @@ const ListContainer = styled.div`
   flex-direction: column;
 `
 
-export default ListView
+export default React.memo(ListView)

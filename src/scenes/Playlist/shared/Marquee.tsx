@@ -5,7 +5,7 @@ import React from 'react'
 import styled from '@emotion/styled'
 
 export enum SCROLL_SPEED {
-  FAST = 0.03,
+  FAST = 0.02,
   SLOW = 0.01,
 }
 
@@ -86,4 +86,4 @@ const Content = styled.div`
   width: max-content;
 `
 
-export default Marquee
+export default React.memo(Marquee)

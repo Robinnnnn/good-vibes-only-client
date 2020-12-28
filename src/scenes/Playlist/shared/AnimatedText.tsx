@@ -102,4 +102,4 @@ const AnimatedText: React.FC<Props> = ({ text, progress }) => {
   )
 }
 
-export default AnimatedText
+export default React.memo(AnimatedText)

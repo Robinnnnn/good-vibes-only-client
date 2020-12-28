@@ -79,11 +79,7 @@ const Marquee: React.FC<Props> = React.memo(({ children, speed }) => {
     s.current = speed
   }, [speed])
 
-  return <Content ref={marquee}>{children}</Content>
+  return <div ref={marquee}>{children}</div>
 })
-
-const Content = styled.div`
-  width: max-content;
-`
 
 export default Marquee

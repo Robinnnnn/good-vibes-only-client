@@ -43,13 +43,17 @@ const TrackInfo: React.FC<Props> = ({
           rightActive
           blurLevel={BLUR_LEVEL.MEDIUM}
         >
-          {isPlaying || isPaused ? (
-            <Marquee speed={isPlaying ? SCROLL_SPEED.FAST : SCROLL_SPEED.SLOW}>
+          <_FullText>
+            {isPlaying || isPaused || isHovering ? (
+              <Marquee
+                speed={isPlaying ? SCROLL_SPEED.FAST : SCROLL_SPEED.SLOW}
+              >
+                <AnimatedText text={data.name} progress={progress} />
+              </Marquee>
+            ) : (
               <AnimatedText text={data.name} progress={progress} />
-            </Marquee>
-          ) : (
-            <AnimatedText text={data.name} progress={progress} />
-          )}
+            )}
+          </_FullText>
         </BlurEdges>
       </TitleContainer>
       <ArtistContainer
@@ -62,6 +66,11 @@ const TrackInfo: React.FC<Props> = ({
     </TrackInfoContainer>
   )
 }
+
+// ensures the text takes up its full width beneath the parent
+const _FullText = styled.div`
+  width: max-content;
+`
 
 const textHeight = 21
 

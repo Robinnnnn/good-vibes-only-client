@@ -20,19 +20,6 @@ const AlbumCover: React.FC<Props> = ({
   isPlaying,
   isPaused,
 }) => {
-  const ImageComponent = React.useCallback(
-    () => (
-      <Cover
-        src={imgUrl}
-        size={thumbnailSize}
-        isHovering={isHovering}
-        isPlaying={isPlaying}
-        isPaused={isPaused}
-      />
-    ),
-    [imgUrl, isHovering, isPaused, isPlaying, thumbnailSize]
-  )
-
   return (
     <_Scale isHovering={isHovering} isPlaying={isPlaying} isPaused={isPaused}>
       <CoverContainer
@@ -47,7 +34,19 @@ const AlbumCover: React.FC<Props> = ({
           isPlaying={isPlaying}
           isPaused={isPaused}
         >
-          <ImageWithSuspense src={imgUrl} Component={ImageComponent} />
+          {/* TODO: fix weird JSX error */}
+          <ImageWithSuspense
+            src={imgUrl}
+            Component={
+              <Cover
+                src={imgUrl}
+                size={thumbnailSize}
+                isHovering={isHovering}
+                isPlaying={isPlaying}
+                isPaused={isPaused}
+              />
+            }
+          />
         </_ImgScaler>
         <Hole
           isHovering={isHovering}

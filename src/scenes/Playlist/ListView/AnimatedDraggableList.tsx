@@ -4,8 +4,6 @@ import { useGesture } from 'react-use-gesture'
 import clamp from 'lodash.clamp'
 import swap from 'lodash-move'
 
-// reference: https://codesandbox.io/embed/r5qmj8m6lq
-
 const TRACK_HEIGHT = 128
 
 type GetSpringConfigProps = {

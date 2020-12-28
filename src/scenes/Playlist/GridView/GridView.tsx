@@ -6,10 +6,12 @@ type Props = {
   data: any
 }
 
+const TRACKS_TO_DISPLAY = 50
+
 const GridView: React.FC<Props> = ({ data }) => {
   return (
     <GridContainer>
-      {data.tracks.items.map(({ track }, index) => (
+      {data.tracks.items.slice(0, TRACKS_TO_DISPLAY).map(({ track }, index) => (
         <Track key={track.id} position={index} data={track} />
       ))}
     </GridContainer>

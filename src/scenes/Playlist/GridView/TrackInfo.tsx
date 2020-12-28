@@ -6,6 +6,7 @@ import AnimatedText from '../shared/AnimatedText'
 import { AnimatedValue } from 'react-spring'
 
 import BlurEdges, { BLUR_LEVEL } from '../../../shared/BlurEdges'
+import Marquee, { SCROLL_SPEED } from '../shared/Marquee'
 
 type Props = {
   data: SpotifyApi.TrackObjectFull
@@ -42,13 +43,13 @@ const TrackInfo: React.FC<Props> = ({
           rightActive
           blurLevel={BLUR_LEVEL.MEDIUM}
         >
-          <_Marquee
-            isHovering={isHovering}
-            isPaused={isPaused}
-            isPlaying={isPlaying}
-          >
+          {isPlaying || isPaused ? (
+            <Marquee speed={isPlaying ? SCROLL_SPEED.FAST : SCROLL_SPEED.SLOW}>
+              <AnimatedText text={data.name} progress={progress} />
+            </Marquee>
+          ) : (
             <AnimatedText text={data.name} progress={progress} />
-          </_Marquee>
+          )}
         </BlurEdges>
       </TitleContainer>
       <ArtistContainer
@@ -105,29 +106,6 @@ const liftTitle = ({ isHovering, isPlaying, isPaused }) => {
     `
   }
 }
-
-const marquee = keyframes`
-    from {
-        transform: translateX(0%);
-    }
-    to {
-        transform: translateX(-100%);
-    }
-`
-
-const _Marquee = styled.div<{
-  isHovering: boolean
-  isPlaying: boolean
-  isPaused: boolean
-}>`
-  width: max-content;
-  animation: ${({ isHovering, isPlaying, isPaused }) =>
-    isHovering || isPlaying || isPaused
-      ? css`
-          ${marquee} 20000ms linear infinite
-        `
-      : ''};
-`
 
 const TitleContainer = styled.div<{
   position: number
@@ -190,4 +168,4 @@ const ArtistContainer = styled.div<{
   ${liftArtist}
 `
 
-export default TrackInfo
+export default React.memo(TrackInfo)

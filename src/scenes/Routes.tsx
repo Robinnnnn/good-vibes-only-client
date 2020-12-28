@@ -5,6 +5,7 @@ import Playlist from './Playlist/Playlist'
 import NotFound from './NotFound'
 import { useAuthState, LoggedOutState } from '../contexts/Auth/AuthContext'
 import { AuthenticatedSpotifySWRProvider } from '../contexts/SWR/SWRContext'
+import Loading from './Loading'
 
 const Routes: React.FC = () => {
   const state = useAuthState()
@@ -21,7 +22,7 @@ const Routes: React.FC = () => {
   // TODO: cleanup redirects
   return (
     <AuthenticatedSpotifySWRProvider>
-      <Suspense fallback={<div>SUSPENSE FALLBACK</div>}>
+      <Suspense fallback={<Loading />}>
         <Router>
           <Playlist path='playlist/:idOrSpotifyLink' />
           <NotFound path='404' />

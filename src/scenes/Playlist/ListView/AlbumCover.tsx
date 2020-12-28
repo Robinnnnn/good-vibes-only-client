@@ -158,7 +158,7 @@ const CoverContainer = styled.div<{ position: number }>`
 
   /* neumorphism */
   background: #ffffff;
-box-shadow:  12px 12px 24px #d1d1d1, 
+box-shadow:  6px 6px 24px #d1d1d1, 
              -12px -12px 24px #ffffff;
   /* background: #f6e9ff;
   box-shadow: 2px 2px 3px #d6cbde, -2px -2px 3px #ffffff; */

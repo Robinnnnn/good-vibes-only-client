@@ -42,7 +42,7 @@ export const useAnimatedProgress = () => {
 // TODO: `interp` function should be generated based on desired colors
 // const colors = ['#ab6bff', '#9ad5f9', '#575df0']
 
-const interp = (r) => `
+const interp = (r: number) => `
   linear-gradient(
     90deg,
     #ab6bff ${r - 100}%, #9ad5f9 ${r - 85}%, #575df0 ${r - 65}%,
@@ -54,11 +54,12 @@ const interp = (r) => `
 
 type Props = {
   text: string
+  textWidth: number
   // @ts-expect-error
   progress: AnimatedValue
 }
 
-const AnimatedText: React.FC<Props> = ({ text, progress }) => {
+const AnimatedText: React.FC<Props> = ({ text, textWidth, progress }) => {
   /**
    * This is probably one of the hackiest things I've ever had to do.
    *
@@ -86,14 +87,34 @@ const AnimatedText: React.FC<Props> = ({ text, progress }) => {
 
   const animatedChildStyles = React.useMemo(() => {
     return {
-      // fixes weird TS complaint: https://github.com/microsoft/TypeScript/issues/11465#issuecomment-252453037
-      visibility: 'visible' as 'visible',
+      visibility: 'visible' as const,
       background: 'inherit',
+      // backgroundClip is for text gradient animation
       WebkitBackgroundClip: 'text',
-      minWidth: '120px',
+      /**
+       * minWidth ensures the text is positioned like this:
+       *
+       *   | crave you      | crave you      |
+       *
+       * instead of like this:
+       *
+       *   | crave you crave| you            |
+       */
+      minWidth: `${textWidth}px`,
+      /**
+       * padding ensures that texts that are almost but not quite 120px
+       * don't get sandwiched with the next title.
+       *
+       * TODO: this should be dynamic based on text content; if the title
+       * is very short, we can end up with too wide of a gap, like so:
+       *
+       *   | fuji           |    fuji        |
+       *
+       * not a super big deal though
+       */
       paddingRight: '40px',
     }
-  }, [])
+  }, [textWidth])
 
   return (
     <animated.div style={animatedParentStyles}>

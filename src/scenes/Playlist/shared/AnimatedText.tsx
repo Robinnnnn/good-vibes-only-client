@@ -74,8 +74,7 @@ const AnimatedText: React.FC<Props> = ({ text, textWidth, progress }) => {
    */
   const animatedParentStyles = React.useMemo(() => {
     return {
-      // fixes weird TS complaint: https://github.com/microsoft/TypeScript/issues/11465#issuecomment-252453037
-      visibility: 'hidden' as 'hidden',
+      visibility: 'hidden' as const,
       // animated background
       background: progress.interpolate(interp),
       // even though the div should technically be invisible, the text

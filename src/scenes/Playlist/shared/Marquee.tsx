@@ -2,7 +2,6 @@
  * proof of concept: https://codesandbox.io/s/text-carousel-with-requestanimationframe-jz214
  */
 import React from 'react'
-import styled from '@emotion/styled'
 
 export enum SCROLL_SPEED {
   FAST = 0.02,
@@ -59,9 +58,10 @@ const Marquee: React.FC<Props> = React.memo(({ children, speed }) => {
     const dD = dT * s.current
 
     if (marquee.current) {
+      const halfwayPoint = marquee.current.offsetWidth / 2
       marquee.current.style.transform = `translateX(-${dD}px)`
       // reset translation once the carousel has moved the width of one child element
-      if (dD >= 120) startTime.current = Date.now()
+      if (dD >= halfwayPoint) startTime.current = Date.now()
       requestAnimationFrame(animate)
     }
   }, [])

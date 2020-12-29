@@ -90,7 +90,8 @@ const AnimatedText: React.FC<Props> = ({ text, progress }) => {
       visibility: 'visible' as 'visible',
       background: 'inherit',
       WebkitBackgroundClip: 'text',
-      width: '120px',
+      minWidth: '120px',
+      paddingRight: '40px',
     }
   }, [])
 

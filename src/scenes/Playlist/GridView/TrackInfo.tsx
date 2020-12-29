@@ -8,6 +8,10 @@ import { AnimatedValue } from 'react-spring'
 import BlurEdges, { BLUR_LEVEL } from '../shared/BlurEdges'
 import Marquee, { SCROLL_SPEED } from '../shared/Marquee'
 
+// dimensions for track title container
+const TEXT_HEIGHT = 21
+const TEXT_WIDTH = 120
+
 type Props = {
   data: SpotifyApi.TrackObjectFull
   position: number
@@ -26,6 +30,23 @@ const TrackInfo: React.FC<Props> = ({
   isPaused,
   isPlaying,
 }) => {
+  const ScrollingText = React.useMemo(() => {
+    const animatedText = (
+      <AnimatedText
+        text={data.name}
+        textWidth={TEXT_WIDTH}
+        progress={progress}
+      />
+    )
+    if (isPlaying) {
+      return <Marquee speed={SCROLL_SPEED.FAST}>{animatedText}</Marquee>
+    }
+    if (isPaused || isHovering) {
+      return <Marquee speed={SCROLL_SPEED.SLOW}>{animatedText}</Marquee>
+    }
+    return animatedText
+  }, [data.name, isHovering, isPaused, isPlaying, progress])
+
   return (
     <TrackInfoContainer
       isHovering={isHovering}
@@ -43,13 +64,7 @@ const TrackInfo: React.FC<Props> = ({
           rightActive
           blurLevel={BLUR_LEVEL.MEDIUM}
         >
-          {isPlaying || isPaused ? (
-            <Marquee speed={isPlaying ? SCROLL_SPEED.FAST : SCROLL_SPEED.SLOW}>
-              <AnimatedText text={data.name} progress={progress} />
-            </Marquee>
-          ) : (
-            <AnimatedText text={data.name} progress={progress} />
-          )}
+          <_FullText>{ScrollingText}</_FullText>
         </BlurEdges>
       </TitleContainer>
       <ArtistContainer
@@ -63,15 +78,13 @@ const TrackInfo: React.FC<Props> = ({
   )
 }
 
-const textHeight = 21
-
 const reveal = keyframes`
   from {
     height: 0px;
     opacity: 0;
   }
   to {
-    height: ${textHeight}px;
+    height: ${TEXT_HEIGHT}px;
     opacity: 1;
   }
 `
@@ -81,8 +94,8 @@ const TrackInfoContainer = styled.div<{
   isPaused: boolean
   isPlaying: boolean
 }>`
-  width: 120px;
-  height: ${textHeight}px;
+  width: ${TEXT_WIDTH}px;
+  height: ${TEXT_HEIGHT}px;
 
   padding-top: 10px;
 
@@ -129,6 +142,11 @@ const TitleContainer = styled.div<{
 
   transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
   ${liftTitle}
+`
+
+// ensures the text takes up its full width beneath the parent
+const _FullText = styled.div`
+  width: max-content;
 `
 
 const liftArtist = ({ isHovering, isPlaying, isPaused }) => {

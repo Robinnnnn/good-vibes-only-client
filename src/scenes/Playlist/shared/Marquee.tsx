@@ -2,7 +2,6 @@
  * proof of concept: https://codesandbox.io/s/text-carousel-with-requestanimationframe-jz214
  */
 import React from 'react'
-import styled from '@emotion/styled'
 
 export enum SCROLL_SPEED {
   FAST = 0.02,
@@ -13,7 +12,7 @@ type Props = {
   speed: SCROLL_SPEED
 }
 
-const Marquee: React.FC<Props> = ({ children, speed }) => {
+const Marquee: React.FC<Props> = React.memo(({ children, speed }) => {
   // ref for HTML element that we'll be moving
   const marquee = React.useRef<HTMLDivElement | null>(null)
 
@@ -59,9 +58,21 @@ const Marquee: React.FC<Props> = ({ children, speed }) => {
     const dD = dT * s.current
 
     if (marquee.current) {
+      /**
+       * reset translation once the carousel has moved the width of one child element:
+       *
+       * t = 0             | crave you    | crave you    |
+       * t = 1         crav|e you    crave| you
+       * t = 2    crave you|              |
+       *
+       *                      ~ RESET ~
+       *
+       * t = 0             | crave you    | crave you    |
+       */
+      const halfwayPoint = marquee.current.offsetWidth / 2
       marquee.current.style.transform = `translateX(-${dD}px)`
-      // reset translation once the carousel has moved the width of one child element
-      if (dD >= 120) startTime.current = Date.now()
+      if (dD >= halfwayPoint) startTime.current = Date.now()
+
       requestAnimationFrame(animate)
     }
   }, [])
@@ -79,11 +90,7 @@ const Marquee: React.FC<Props> = ({ children, speed }) => {
     s.current = speed
   }, [speed])
 
-  return <Content ref={marquee}>{children}</Content>
-}
+  return <div ref={marquee}>{children}</div>
+})
 
-const Content = styled.div`
-  width: max-content;
-`
-
-export default React.memo(Marquee)
+export default Marquee

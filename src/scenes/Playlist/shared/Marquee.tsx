@@ -58,10 +58,21 @@ const Marquee: React.FC<Props> = React.memo(({ children, speed }) => {
     const dD = dT * s.current
 
     if (marquee.current) {
+      /**
+       * reset translation once the carousel has moved the width of one child element:
+       *
+       * t = 0             | crave you    | crave you    |
+       * t = 1         crav|e you    crave| you
+       * t = 2    crave you|              |
+       *
+       *                      ~ RESET ~
+       *
+       * t = 0             | crave you    | crave you    |
+       */
       const halfwayPoint = marquee.current.offsetWidth / 2
       marquee.current.style.transform = `translateX(-${dD}px)`
-      // reset translation once the carousel has moved the width of one child element
       if (dD >= halfwayPoint) startTime.current = Date.now()
+
       requestAnimationFrame(animate)
     }
   }, [])

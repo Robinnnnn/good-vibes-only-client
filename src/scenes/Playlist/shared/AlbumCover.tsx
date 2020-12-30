@@ -28,25 +28,27 @@ const AlbumCover: React.FC<Props> = ({
         position={position}
         isPlaying={isPlaying}
       >
-        {/* slightly scales up the inner image to reduce width of outer "lip" */}
-        <_ImgScaler
-          isHovering={isHovering}
-          isPlaying={isPlaying}
-          isPaused={isPaused}
-        >
-          <ImageWithSuspense
-            src={imgUrl}
-            Component={
-              <Cover
-                src={imgUrl}
-                size={thumbnailSize}
-                isHovering={isHovering}
-                isPlaying={isPlaying}
-                isPaused={isPaused}
-              />
-            }
-          />
-        </_ImgScaler>
+        <_GradientBackground isPlaying={isPlaying}>
+          {/* slightly scales up the inner image to reduce width of outer "lip" */}
+          <_ImgScaler
+            isHovering={isHovering}
+            isPlaying={isPlaying}
+            isPaused={isPaused}
+          >
+            <ImageWithSuspense
+              src={imgUrl}
+              Component={
+                <Cover
+                  src={imgUrl}
+                  size={thumbnailSize}
+                  isHovering={isHovering}
+                  isPlaying={isPlaying}
+                  isPaused={isPaused}
+                />
+              }
+            />
+          </_ImgScaler>
+        </_GradientBackground>
         <Hole
           isHovering={isHovering}
           isPlaying={isPlaying}
@@ -109,12 +111,12 @@ const CoverContainer = styled.div<{
   animation-timing-function: cubic-bezier(0,1.39,.67,.98);
 
   /* neumorphism */
-  background: ${({ isPlaying }) =>
+  /*background: ${({ isPlaying }) =>
     isPlaying
       ? `linear-gradient(90deg,#c79cff,#93d6ff 33%,#9da0ff 66%,#c091ff)`
       : '#ffffff'};
   box-shadow: ${({ isPlaying }) =>
-    isPlaying ? `3px 3px 8px #dbc5ff` : '6px 6px 24px #d1d1d1'};
+    isPlaying ? `3px 3px 8px #dbc5ff` : '6px 6px 24px #d1d1d1'};*/
   /* box-shadow: 0px 6px 10px #d1d1d1; */
 
   transition: 3s cubic-bezier(0.14, 0.97, 1, 1);
@@ -127,6 +129,35 @@ const CoverContainer = styled.div<{
   box-shadow:  14px 14px 26px #131313, 
              -14px -14px 26px #4d4d4d; */
 }`
+
+const backgroundGradient = keyframes`
+  from {
+    background-position: 0;
+  }
+  to {
+    background-position: 100%;
+  }
+`
+
+const _GradientBackground = styled.div<{ isPlaying: boolean }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
+
+  background: ${({ isPlaying }) =>
+    isPlaying
+      ? `linear-gradient(90deg,#c79cff,#93d6ff 15%,#9da0ff 35%,#c79cff 50%, #93d6ff 65%,#9da0ff 85%,#c79cff)`
+      : '#ffffff'};
+  background-size: 200% 100%;
+  box-shadow: ${({ isPlaying }) =>
+    isPlaying ? `3px 3px 8px #dbc5ff` : '6px 6px 24px #d1d1d1'};
+
+  animation: ${backgroundGradient} 3s linear infinite;
+`
 
 const _ImgScaler = styled.div<{
   isHovering: boolean

@@ -25,7 +25,7 @@ const useMemoizedTrackList = (items) => {
 }
 
 type Props = {
-  data: any
+  data: SpotifyApi.SinglePlaylistResponse
 }
 
 const ListView: React.FC<Props> = ({ data }) => {

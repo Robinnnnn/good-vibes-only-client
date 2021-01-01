@@ -3,17 +3,20 @@ import styled from '@emotion/styled'
 import Track from './Track'
 
 type Props = {
-  data: any
+  data: SpotifyApi.SinglePlaylistResponse
 }
 
+const START_INDEX = 0
 const TRACKS_TO_DISPLAY = 50
 
 const GridView: React.FC<Props> = ({ data }) => {
   return (
     <GridContainer>
-      {data.tracks.items.slice(0, TRACKS_TO_DISPLAY).map(({ track }, index) => (
-        <Track key={track.id} position={index} data={track} />
-      ))}
+      {data.tracks.items
+        .slice(START_INDEX, START_INDEX + TRACKS_TO_DISPLAY)
+        .map(({ track }, index) => (
+          <Track key={track.id} position={index} data={track} />
+        ))}
     </GridContainer>
   )
 }

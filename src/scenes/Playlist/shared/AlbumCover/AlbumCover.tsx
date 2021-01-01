@@ -1,7 +1,8 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { css, keyframes } from '@emotion/core'
-import { ImageWithSuspense } from '../../../contexts/ImageLoader/ImageLoaderContext'
+import { ImageWithSuspense } from '../../../../contexts/ImageLoader/ImageLoaderContext'
+import GradientBackground from './GradientBackground'
 
 type Props = {
   position: number
@@ -28,25 +29,27 @@ const AlbumCover: React.FC<Props> = ({
         position={position}
         isPlaying={isPlaying}
       >
-        {/* slightly scales up the inner image to reduce width of outer "lip" */}
-        <_ImgScaler
-          isHovering={isHovering}
-          isPlaying={isPlaying}
-          isPaused={isPaused}
-        >
-          <ImageWithSuspense
-            src={imgUrl}
-            Component={
-              <Cover
-                src={imgUrl}
-                size={thumbnailSize}
-                isHovering={isHovering}
-                isPlaying={isPlaying}
-                isPaused={isPaused}
-              />
-            }
-          />
-        </_ImgScaler>
+        <GradientBackground isPlaying={isPlaying}>
+          {/* slightly scales up the inner image to reduce width of outer "lip" */}
+          <_ImgScaler
+            isHovering={isHovering}
+            isPlaying={isPlaying}
+            isPaused={isPaused}
+          >
+            <ImageWithSuspense
+              src={imgUrl}
+              Component={
+                <Cover
+                  src={imgUrl}
+                  size={thumbnailSize}
+                  isHovering={isHovering}
+                  isPlaying={isPlaying}
+                  isPaused={isPaused}
+                />
+              }
+            />
+          </_ImgScaler>
+        </GradientBackground>
         <Hole
           isHovering={isHovering}
           isPlaying={isPlaying}
@@ -109,12 +112,15 @@ const CoverContainer = styled.div<{
   animation-timing-function: cubic-bezier(0,1.39,.67,.98);
 
   /* neumorphism */
-  background: #ffffff;
-  box-shadow:  6px 6px 24px #d1d1d1;
+  /*background: ${({ isPlaying }) =>
+    isPlaying
+      ? `linear-gradient(90deg,#c79cff,#93d6ff 33%,#9da0ff 66%,#c091ff)`
+      : '#ffffff'};
+  box-shadow: ${({ isPlaying }) =>
+    isPlaying ? `3px 3px 8px #dbc5ff` : '6px 6px 24px #d1d1d1'};*/
+  /* box-shadow: 0px 6px 10px #d1d1d1; */
 
-  transition: 0.3s cubic-bezier(0.14, 0.97, 1, 1);
-
-  ${({ isPlaying }) => (isPlaying ? `box-shadow: 5px 5px 12px #ceafff` : '')};
+  transition: 3s cubic-bezier(0.14, 0.97, 1, 1);
   
   /* background: #f6e9ff;
   box-shadow: 2px 2px 3px #d6cbde, -2px -2px 3px #ffffff; */
@@ -167,13 +173,18 @@ const Cover = styled.img<{
 }>`
   position: absolute;
   border-radius: 100%;
-  width: ${({ size }) => `${size - 8}px`};
-  height: ${({ size }) => `${size - 8}px`};
+
+  ${({ size, isPlaying }) => {
+    if (isPlaying) return `width: ${size - 6}px;`
+    return `width: ${size - 8}px;`
+  }};
 
   filter: ${({ isHovering, isPlaying }) => `
     brightness(${isPlaying ? 100 : isHovering ? 93 : 80}%)
   `};
   transition: filter 0.8s cubic-bezier(0.14, 0.97, 1, 1);
+
+  opacity: ${({ isPlaying }) => (isPlaying ? 0.85 : 0.9)};
 
   ${({ isHovering, isPlaying, isPaused }) => {
     if (isHovering) return slowSpin
@@ -191,7 +202,10 @@ const Hole = styled.div<{
   width: 11px;
   height: 11px;
   border-radius: 100%;
-  box-shadow: inset 2px 2px 2px 1px #e5e5e5;
+  box-shadow: ${({ isPlaying }) =>
+    isPlaying
+      ? `inset 2px 2px 2px 1px #dbc5ff`
+      : 'inset 2px 2px 2px 1px #e5e5e5'};
 
   transition: transform 0.2s ease-in;
   transform: scale(0);

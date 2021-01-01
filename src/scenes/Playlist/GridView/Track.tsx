@@ -6,7 +6,7 @@ import {
   usePlaybackState,
 } from '../../../contexts/Spotify/PlaybackContext/PlaybackContext'
 import { useAnimatedProgress } from '../shared/AnimatedText'
-import AlbumCover from '../shared/AlbumCover'
+import AlbumCover from '../shared/AlbumCover/AlbumCover'
 import TrackInfo from './TrackInfo'
 
 type Props = {

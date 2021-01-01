@@ -1,7 +1,8 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { css, keyframes } from '@emotion/core'
-import { ImageWithSuspense } from '../../../contexts/ImageLoader/ImageLoaderContext'
+import { ImageWithSuspense } from '../../../../contexts/ImageLoader/ImageLoaderContext'
+import GradientBackground from './GradientBackground'
 
 type Props = {
   position: number
@@ -28,7 +29,7 @@ const AlbumCover: React.FC<Props> = ({
         position={position}
         isPlaying={isPlaying}
       >
-        <_GradientBackground isPlaying={isPlaying}>
+        <GradientBackground isPlaying={isPlaying}>
           {/* slightly scales up the inner image to reduce width of outer "lip" */}
           <_ImgScaler
             isHovering={isHovering}
@@ -48,7 +49,7 @@ const AlbumCover: React.FC<Props> = ({
               }
             />
           </_ImgScaler>
-        </_GradientBackground>
+        </GradientBackground>
         <Hole
           isHovering={isHovering}
           isPlaying={isPlaying}
@@ -130,35 +131,6 @@ const CoverContainer = styled.div<{
              -14px -14px 26px #4d4d4d; */
 }`
 
-const backgroundGradient = keyframes`
-  from {
-    background-position: 0;
-  }
-  to {
-    background-position: 100%;
-  }
-`
-
-const _GradientBackground = styled.div<{ isPlaying: boolean }>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  width: 100%;
-  height: 100%;
-  border-radius: 100%;
-
-  background: ${({ isPlaying }) =>
-    isPlaying
-      ? `linear-gradient(90deg,#c79cff,#93d6ff 15%,#9da0ff 35%,#c79cff 50%, #93d6ff 65%,#9da0ff 85%,#c79cff)`
-      : '#ffffff'};
-  background-size: 200% 100%;
-  box-shadow: ${({ isPlaying }) =>
-    isPlaying ? `3px 3px 8px #dbc5ff` : '6px 6px 24px #d1d1d1'};
-
-  animation: ${backgroundGradient} 3s linear infinite;
-`
-
 const _ImgScaler = styled.div<{
   isHovering: boolean
   isPlaying: boolean
@@ -211,6 +183,8 @@ const Cover = styled.img<{
     brightness(${isPlaying ? 100 : isHovering ? 93 : 80}%)
   `};
   transition: filter 0.8s cubic-bezier(0.14, 0.97, 1, 1);
+
+  opacity: ${({ isPlaying }) => (isPlaying ? 0.85 : 0.9)};
 
   ${({ isHovering, isPlaying, isPaused }) => {
     if (isHovering) return slowSpin

@@ -1,0 +1,7 @@
+.track {
+  cursor: url('./play.svg'), pointer;
+}
+
+.playing {
+  cursor: url('./pause.svg'), pointer;
+}

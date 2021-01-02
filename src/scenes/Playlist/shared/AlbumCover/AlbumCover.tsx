@@ -104,7 +104,6 @@ const CoverContainer = styled.div<{
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
 
   animation: ${rotateIn} 1200ms;
   animation-delay: ${({ position }) => `${position * 50}ms`};

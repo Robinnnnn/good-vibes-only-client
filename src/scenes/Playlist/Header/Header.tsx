@@ -73,6 +73,7 @@ const backgroundGradient = keyframes`
 
 const GradientBorder = styled.div`
   /* attributes are flipped because we're rotated */
+  margin-left: 2px;
   height: 2px;
   width: 100vh;
   transform: rotate(90deg);
@@ -92,7 +93,7 @@ const GradientBorder = styled.div`
     #ae70ff 100%
   );
   background-size: 200% 100%;
-  animation: ${backgroundGradient} 2s linear infinite;
+  animation: ${backgroundGradient} 5s linear infinite;
 `
 
 const _RotateVertical = styled.div`
@@ -101,6 +102,9 @@ const _RotateVertical = styled.div`
   writing-mode: vertical-rl;
 
   display: flex;
+
+  /* box-shadow: inset 6px 0px 20px -10px #8c8c8c; */
+  box-shadow: inset 6px 0px 20px -10px #888cff;
 `
 
 const TitleContainer = styled.div`

@@ -72,7 +72,6 @@ const backgroundGradient = keyframes`
 
 const GradientBorder = styled.div`
   /* attributes are flipped because we're rotated */
-  margin-left: 2px;
   height: 2px;
   width: 100vh;
   transform: rotate(90deg);
@@ -102,8 +101,9 @@ const _RotateVertical = styled.div`
 
   display: flex;
 
-  /* box-shadow: inset 6px 0px 20px -10px #8c8c8c; */
-  box-shadow: inset 6px 0px 20px -10px #888cff;
+  /* inset version */
+  /* box-shadow: inset 6px 0px 20px -10px #888cff; */
+  box-shadow: 0px 6px 12px -1px #888cff;
 `
 
 const TitleContainer = styled.div`

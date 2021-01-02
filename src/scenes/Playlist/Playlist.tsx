@@ -9,6 +9,7 @@ import ListView from './ListView/ListView'
 import GridView from './GridView/GridView'
 import { navigate } from '@reach/router'
 import { ImageLoaderProvider } from '../../contexts/ImageLoader/ImageLoaderContext'
+import PlaybackController from './PlaybackController/PlaybackController'
 
 /**
  * Matches the 22-char Spotify ID out of the following strings:
@@ -67,6 +68,7 @@ const Playlist: React.FC<RouteComponentProps<Props>> = ({
               <GridView playlist={playlist} />
             )}
           </TracksContainer>
+          <PlaybackController />
         </PlaylistContainer>
       </PlaybackProvider>
     </ImageLoaderProvider>

@@ -6,7 +6,10 @@ type Props = {
   isPlaying: boolean
 }
 
-const TRANSITION_MS = 1200
+// to account for optical illusion, white -> gradient transition needs to be faster
+const WHITE_TO_GRADIENT_MS = 800
+const GRADIENT_TO_WHITE_MS = 1200
+const MAX_TRANSITION_MS = Math.max(WHITE_TO_GRADIENT_MS, GRADIENT_TO_WHITE_MS)
 
 const GradientBackground: React.FC<Props> = React.memo(
   ({ isPlaying, children }) => {
@@ -16,11 +19,11 @@ const GradientBackground: React.FC<Props> = React.memo(
     React.useEffect(() => {
       if (isPlaying && whiteMounted) {
         setGradientMounted(true)
-        setTimeout(() => setWhiteMounted(false), TRANSITION_MS + 200)
+        setTimeout(() => setWhiteMounted(false), MAX_TRANSITION_MS + 200)
       }
       if (!isPlaying && gradientMounted) {
         setWhiteMounted(true)
-        setTimeout(() => setGradientMounted(false), TRANSITION_MS + 200)
+        setTimeout(() => setGradientMounted(false), MAX_TRANSITION_MS + 200)
       }
     }, [isPlaying, whiteMounted, gradientMounted])
 
@@ -42,7 +45,8 @@ const White = styled.div<{ isPlaying }>`
   border-radius: 100%;
 
   background: white;
-  transition: opacity ${TRANSITION_MS}ms cubic-bezier(0.04, 0.64, 0.4, 1.02);
+  transition: opacity ${WHITE_TO_GRADIENT_MS}ms
+    cubic-bezier(0.04, 0.64, 0.4, 1.02);
   opacity: ${({ isPlaying }) => (isPlaying ? 0 : 1)};
 
   box-shadow: 6px 6px 24px #d1d1d1;
@@ -80,7 +84,8 @@ const Gradient = styled.div<{ isPlaying: boolean }>`
   );
   background-size: 200% 100%;
   animation: ${backgroundGradient} 2s linear infinite;
-  transition: opacity ${TRANSITION_MS}ms cubic-bezier(0.04, 0.64, 0.4, 1.02);
+  transition: opacity ${GRADIENT_TO_WHITE_MS}ms
+    cubic-bezier(0.04, 0.64, 0.4, 1.02);
   opacity: ${({ isPlaying }) => (isPlaying ? 1 : 0)};
 
   box-shadow: 3px 3px 8px #dbc5ff;

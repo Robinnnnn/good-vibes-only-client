@@ -118,7 +118,10 @@ export const AuthProvider: React.FC = React.memo(({ children }) => {
         setAuthState(LoggedInState)
         utils.clearCookies()
       } catch (e) {
-        setApplicationError('Authorization failed! Could not fetch uer data', e)
+        setApplicationError(
+          'Authorization failed! Could not fetch user data',
+          e
+        )
         setLoggedOutState()
       }
     },

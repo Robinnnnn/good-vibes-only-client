@@ -9,6 +9,11 @@ import { useAnimatedProgress } from '../shared/AnimatedText'
 import AlbumCover from '../shared/AlbumCover/AlbumCover'
 import TrackInfo from './TrackInfo'
 
+/**
+ * using css here because importing an SVG filepath into emotionjs is unclear
+ */
+import './cursor.css'
+
 type Props = {
   position: number
   data: SpotifyApi.TrackObjectFull
@@ -41,13 +46,17 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
     playPauseTrack(track)
   }, [playPauseTrack, track])
 
+  const className = React.useMemo(() => {
+    return isPlaying ? 'track playing' : 'track'
+  }, [isPlaying])
+
   return (
     <TrackContainer
       position={position}
       isHovering={isHovering}
       isPlaying={isPlaying}
       isPaused={isPaused}
-      className='track'
+      className={className}
       onMouseOver={handleMouseOver}
       onMouseLeave={handleMouseLeave}
       onClick={handlePlayPause}
@@ -105,7 +114,6 @@ const TrackContainer = styled.div<{
 
   flex-direction: column;
 
-  cursor: pointer;
   user-select: none;
 
   transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);

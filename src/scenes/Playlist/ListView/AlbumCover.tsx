@@ -148,7 +148,6 @@ const CoverContainer = styled.div<{ position: number }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
 
   opacity: 0;
   animation: ${fadein} 1200ms;

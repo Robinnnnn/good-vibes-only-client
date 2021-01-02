@@ -21,6 +21,19 @@ const PlaybackController: React.FC<Props> = () => {
       <GradientBorder />
       <Content>
         <div>playback controller</div>
+        <TrackDetails>
+          <div>{selectedTrack.name}</div>
+          <TrackArtists>
+            {selectedTrack.artists.map((artist, i) => (
+              <ArtistAndPlus key={artist.name}>
+                <ExternalLink to={artist.external_urls.spotify}>
+                  {artist.name}
+                </ExternalLink>
+                {i !== selectedTrack.artists.length - 1 ? <Plus>+</Plus> : null}
+              </ArtistAndPlus>
+            ))}
+          </TrackArtists>
+        </TrackDetails>
         <PlaylistCoverContainer>
           <ExternalLink to={selectedTrack.external_urls.spotify}>
             <ImageWithSuspense
@@ -90,6 +103,24 @@ const GradientBorder = styled.div`
 const Content = styled.div`
   display: flex;
   justify-content: space-between;
+`
+
+const TrackDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  text-transform: lowercase;
+`
+
+const TrackArtists = styled.div`
+  display: flex;
+`
+
+const ArtistAndPlus = styled.div`
+  display: flex;
+`
+
+const Plus = styled.div`
+  padding: 0px 6px;
 `
 
 const PlaylistCoverContainer = styled.div`

@@ -6,12 +6,10 @@ import { ImageWithSuspense } from '../../../contexts/ImageLoader/ImageLoaderCont
 import ExternalLink from '../../../shared/notifications/ExternalLink'
 
 type Props = {
-  data: SpotifyApi.SinglePlaylistResponse
+  playlist: SpotifyApi.SinglePlaylistResponse
 }
 
-const Sidebar: React.FC<Props> = ({ data: playlist }) => {
-  console.log({ playlist })
-
+const Sidebar: React.FC<Props> = ({ playlist }) => {
   // might show this somewhere else
   // const duration = React.useMemo(
   //   () =>

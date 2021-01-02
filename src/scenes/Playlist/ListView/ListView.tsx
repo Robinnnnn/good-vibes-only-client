@@ -25,14 +25,14 @@ const useMemoizedTrackList = (items) => {
 }
 
 type Props = {
-  data: SpotifyApi.SinglePlaylistResponse
+  playlist: SpotifyApi.SinglePlaylistResponse
 }
 
-const ListView: React.FC<Props> = ({ data }) => {
+const ListView: React.FC<Props> = ({ playlist }) => {
   const tracks = useMemoizedTrackList(
-    data.tracks.items.slice(0, TRACKS_TO_DISPLAY)
+    playlist.tracks.items.slice(0, TRACKS_TO_DISPLAY)
   )
-  // const tracks = data.tracks.items
+  // const tracks = playlist.tracks.items
 
   const TrackRow = React.useCallback(
     ({ position }) => (

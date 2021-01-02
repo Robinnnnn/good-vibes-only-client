@@ -35,7 +35,7 @@ const Playlist: React.FC<RouteComponentProps<Props>> = ({
 
   const { logout } = useAuthActions()
 
-  const { data } = useSWR<SpotifyApi.SinglePlaylistResponse>([
+  const { data: playlist } = useSWR<SpotifyApi.SinglePlaylistResponse>([
     'getPlaylist',
     playlistId,
   ])
@@ -57,14 +57,14 @@ const Playlist: React.FC<RouteComponentProps<Props>> = ({
 
   return (
     <ImageLoaderProvider>
-      <PlaybackProvider playlistUri={data.uri}>
+      <PlaybackProvider playlistUri={playlist.uri}>
         <PlaylistContainer>
-          <Sidebar data={data} />
+          <Sidebar playlist={playlist} />
           <TracksContainer>
             {view === 'list' ? (
-              <ListView data={data} />
+              <ListView playlist={playlist} />
             ) : (
-              <GridView data={data} />
+              <GridView playlist={playlist} />
             )}
           </TracksContainer>
         </PlaylistContainer>

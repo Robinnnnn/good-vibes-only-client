@@ -20,6 +20,8 @@ type Props = {
 }
 
 const Track: React.FC<Props> = ({ position, data: track }) => {
+  // TODO: check if we can make a connected component using next ~5 lines
+  // to prevent frequent rerenders
   const { isPlaying: activePlayback } = usePlaybackState()
   const { isSelectedTrack, playPauseTrack } = usePlaybackActions()
   const isSelected = isSelectedTrack(track.id)
@@ -64,6 +66,8 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
       <AlbumCover
         position={position}
         thumbnailSize={100}
+        // TODO: this pulls the highest res image, which is probably over kill
+        // we need to do this though since sometimes images[1] doesn't exist
         imgUrl={track.album.images[0].url}
         isHovering={isHovering}
         isPlaying={isPlaying}

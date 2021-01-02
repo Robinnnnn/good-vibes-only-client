@@ -39,6 +39,8 @@ const Sidebar: React.FC<Props> = ({ playlist }) => {
         <PlaylistCoverContainer>
           <ExternalLink to={playlist.external_urls.spotify}>
             <ImageWithSuspense
+              // TODO: this pulls the highest res image, which is probably over kill
+              // we need to do this though since sometimes images[1] doesn't exist
               src={playlist.images[0].url}
               Component={<Cover src={playlist.images[0].url} />}
             />
@@ -61,6 +63,7 @@ const Content = styled.div`
   flex-direction: column;
 `
 
+// TODO: make component if exists in multiple places
 const backgroundGradient = keyframes`
   from {
     background-position: 0;

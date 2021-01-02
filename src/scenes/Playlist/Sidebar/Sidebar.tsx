@@ -9,16 +9,17 @@ type Props = {
   data: SpotifyApi.SinglePlaylistResponse
 }
 
-const Header: React.FC<Props> = ({ data: playlist }) => {
+const Sidebar: React.FC<Props> = ({ data: playlist }) => {
   console.log({ playlist })
 
-  const duration = React.useMemo(
-    () =>
-      msToTimestamp(
-        playlist.tracks.items.reduce((d, i) => d + i.track.duration_ms, 0)
-      ),
-    [playlist.tracks.items]
-  )
+  // might show this somewhere else
+  // const duration = React.useMemo(
+  //   () =>
+  //     msToTimestamp(
+  //       playlist.tracks.items.reduce((d, i) => d + i.track.duration_ms, 0)
+  //     ),
+  //   [playlist.tracks.items]
+  // )
 
   return (
     <Container>
@@ -139,4 +140,4 @@ const Cover = styled.img`
   width: 100%;
 `
 
-export default React.memo(Header)
+export default React.memo(Sidebar)

@@ -4,7 +4,7 @@ import { useAuthActions } from '../../contexts/Auth/AuthContext'
 import useSWR from 'swr'
 import styled from '@emotion/styled'
 import { PlaybackProvider } from '../../contexts/Spotify/PlaybackContext/PlaybackContext'
-import Header from './Header/Header'
+import Sidebar from './Sidebar/Sidebar'
 import ListView from './ListView/ListView'
 import GridView from './GridView/GridView'
 import { navigate } from '@reach/router'
@@ -59,7 +59,7 @@ const Playlist: React.FC<RouteComponentProps<Props>> = ({
     <ImageLoaderProvider>
       <PlaybackProvider playlistUri={data.uri}>
         <PlaylistContainer>
-          <Header data={data} />
+          <Sidebar data={data} />
           <TracksContainer>
             {view === 'list' ? (
               <ListView data={data} />

@@ -25,7 +25,7 @@ export const usePlaybackState = (): PlaybackState => {
 
 type PlaybackActions = {
   isSelectedTrack: (id: string) => boolean
-  playPauseTrack: (track: SpotifyApi.TrackObjectFull) => void
+  playPauseTrack: (track?: SpotifyApi.TrackObjectFull) => void
 }
 
 const PlaybackActionsContext = React.createContext<PlaybackActions | undefined>(
@@ -111,9 +111,12 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
 
     const { sdk } = useSpotifyState()
 
+    // TODO: this needs to handle if no tracks are active at all, play first track in playlist
     const playPauseTrack = React.useCallback(
-      (track: SpotifyApi.TrackObjectFull) => {
+      (track?: SpotifyApi.TrackObjectFull) => {
         setOptimisticUpdateInProgress(true)
+
+        if (!track) track = selectedTrack
 
         const trackIsSelected = isSelectedTrack(track.id)
         const shouldPause = trackIsSelected && isPlaying
@@ -136,7 +139,7 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
         setIsPlaying(true)
         setSelectedTrack(track)
       },
-      [isPlaying, isSelectedTrack, playlistUri, progressMs, sdk]
+      [isPlaying, selectedTrack, isSelectedTrack, playlistUri, progressMs, sdk]
     )
 
     // console.log({

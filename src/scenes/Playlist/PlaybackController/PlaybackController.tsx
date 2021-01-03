@@ -4,6 +4,7 @@ import { keyframes } from '@emotion/core'
 import { usePlaybackState } from '../../../contexts/Spotify/PlaybackContext/PlaybackContext'
 import ExternalLink from '../../../shared/notifications/ExternalLink'
 import { ImageWithSuspense } from '../../../contexts/ImageLoader/ImageLoaderContext'
+import PlaybackNav from './PlaybackNav'
 
 type Props = {}
 
@@ -20,20 +21,24 @@ const PlaybackController: React.FC<Props> = () => {
     <Container>
       <GradientBorder />
       <Content>
-        <div>playback controller</div>
-        <TrackDetails>
-          <div>{selectedTrack.name}</div>
-          <TrackArtists>
-            {selectedTrack.artists.map((artist, i) => (
-              <ArtistAndPlus key={artist.name}>
-                <ExternalLink to={artist.external_urls.spotify}>
-                  {artist.name}
-                </ExternalLink>
-                {i !== selectedTrack.artists.length - 1 ? <Plus>+</Plus> : null}
-              </ArtistAndPlus>
-            ))}
-          </TrackArtists>
-        </TrackDetails>
+        <TextContent>
+          <PlaybackNav />
+          <TrackDetails>
+            <div>{selectedTrack.name}</div>
+            <TrackArtists>
+              {selectedTrack.artists.map((artist, i) => (
+                <ArtistAndPlus key={artist.name}>
+                  <ExternalLink to={artist.external_urls.spotify}>
+                    {artist.name}
+                  </ExternalLink>
+                  {i !== selectedTrack.artists.length - 1 ? (
+                    <Plus>+</Plus>
+                  ) : null}
+                </ArtistAndPlus>
+              ))}
+            </TrackArtists>
+          </TrackDetails>
+        </TextContent>
         <PlaylistCoverContainer>
           <ExternalLink to={selectedTrack.external_urls.spotify}>
             <ImageWithSuspense
@@ -79,12 +84,11 @@ const backgroundGradient = keyframes`
 `
 
 const GradientBorder = styled.div`
+  position: absolute;
+
   /* attributes are flipped because we're rotated */
   height: 2px;
   width: 100%;
-
-  /* needs to appear beneath album cover */
-  z-index: -1;
 
   background: linear-gradient(
     90deg,
@@ -105,10 +109,18 @@ const Content = styled.div`
   justify-content: space-between;
 `
 
+const TextContent = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+`
+
 const TrackDetails = styled.div`
   display: flex;
   flex-direction: column;
   text-transform: lowercase;
+  position: absolute;
+  left: 0;
 `
 
 const TrackArtists = styled.div`

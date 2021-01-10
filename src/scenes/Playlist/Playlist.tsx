@@ -80,7 +80,7 @@ const PlaylistContainer = styled.div`
 `
 
 const TracksContainer = styled.div`
-  padding: 80px 80px 80px 160px;
+  padding: 80px;
 `
 
 export default React.memo(Playlist)

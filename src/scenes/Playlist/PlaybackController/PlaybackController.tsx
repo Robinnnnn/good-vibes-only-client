@@ -19,7 +19,10 @@ const PlaybackController: React.FC<Props> = () => {
 
   return (
     <Container>
-      <GradientBorder />
+      <ProgressBorder>
+        <GradientBorder />
+        <ProgressCurtain />
+      </ProgressBorder>
       <Content>
         <TextContent>
           <PlaybackNav />
@@ -39,7 +42,7 @@ const PlaybackController: React.FC<Props> = () => {
             </TrackArtists>
           </TrackDetails>
         </TextContent>
-        <PlaylistCoverContainer>
+        {/* <PlaylistCoverContainer>
           <ExternalLink to={selectedTrack.external_urls.spotify}>
             <ImageWithSuspense
               // TODO: this pulls the highest res image, which is probably over kill
@@ -48,7 +51,7 @@ const PlaybackController: React.FC<Props> = () => {
               Component={<Cover src={selectedTrack.album.images[0].url} />}
             />
           </ExternalLink>
-        </PlaylistCoverContainer>
+        </PlaylistCoverContainer> */}
       </Content>
     </Container>
   )
@@ -60,17 +63,14 @@ const Container = styled.div`
   flex-direction: column;
   position: fixed;
   bottom: 0;
-  width: calc(100vw - 80px);
+  width: 100%;
 
   height: 80px;
   background: white;
 
-  /* makes room for sidebar, which is also position fixed */
-  margin-left: 80px;
-
   /* inset version */
   /* box-shadow: inset 6px 0px 20px -10px #888cff; */
-  box-shadow: 6px 0px 12px -1px #888cff;
+  box-shadow: 6px 0px 8px -2px #a1a4ff;
 `
 
 // TODO: make component if exists in multiple places
@@ -83,12 +83,14 @@ const backgroundGradient = keyframes`
   }
 `
 
-const GradientBorder = styled.div`
-  position: absolute;
-
-  /* attributes are flipped because we're rotated */
-  height: 2px;
+const ProgressBorder = styled.div`
+  position: relative;
+  height: 3px;
   width: 100%;
+`
+
+const GradientBorder = styled.div`
+  height: 100%;
 
   background: linear-gradient(
     90deg,
@@ -104,9 +106,22 @@ const GradientBorder = styled.div`
   animation: ${backgroundGradient} 5s linear infinite reverse;
 `
 
+const ProgressCurtain = styled.div`
+  position: absolute;
+
+  height: 100%;
+  background: white;
+  opacity: 0.6;
+  top: 0;
+  right: 0;
+  width: 33%;
+`
+
 const Content = styled.div`
+  height: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 `
 
 const TextContent = styled.div`

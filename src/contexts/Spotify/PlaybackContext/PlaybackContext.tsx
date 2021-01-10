@@ -100,6 +100,10 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
       setOptimisticUpdateInProgress,
     ] = React.useState<boolean>(false)
 
+    // TODO: similar to progressRef further below, it might make sense to make all of these
+    // refs, and have callbacks to retrieve the latest value (getIsPlaying, getSelectedTrack)
+    // this is because changing `isPlaying` and `selectedTrack` have undesirable effects where
+    // all callbacks/states that are subscribed to them as dependences end up re-rendering
     const state = React.useMemo(() => ({ isPlaying, selectedTrack }), [
       isPlaying,
       selectedTrack,

@@ -12,29 +12,34 @@ type Props = {}
 const PlaybackController: React.FC<Props> = () => {
   // TODO: check if we can make a connected component using next ~5 lines
   // to prevent frequent rerenders. right now `selectedTrack` will log every second
-  const { selectedTrack } = usePlaybackState()
+  const { isPlaying, selectedTrack } = usePlaybackState()
 
   return (
     <Container>
-      <ProgressBar />
+      <ProgressBar
+        duration={selectedTrack?.duration_ms}
+        isPlaying={isPlaying}
+      />
       <Content>
         <TextContent>
           <PlaybackNav />
-          <TrackDetails>
-            <div>{selectedTrack.name}</div>
-            <TrackArtists>
-              {selectedTrack.artists.map((artist, i) => (
-                <ArtistAndPlus key={artist.name}>
-                  <ExternalLink to={artist.external_urls.spotify}>
-                    {artist.name}
-                  </ExternalLink>
-                  {i !== selectedTrack.artists.length - 1 ? (
-                    <Plus>+</Plus>
-                  ) : null}
-                </ArtistAndPlus>
-              ))}
-            </TrackArtists>
-          </TrackDetails>
+          {selectedTrack ? (
+            <TrackDetails>
+              <div>{selectedTrack.name}</div>
+              <TrackArtists>
+                {selectedTrack.artists.map((artist, i) => (
+                  <ArtistAndPlus key={artist.name}>
+                    <ExternalLink to={artist.external_urls.spotify}>
+                      {artist.name}
+                    </ExternalLink>
+                    {i !== selectedTrack.artists.length - 1 ? (
+                      <Plus>+</Plus>
+                    ) : null}
+                  </ArtistAndPlus>
+                ))}
+              </TrackArtists>
+            </TrackDetails>
+          ) : null}
         </TextContent>
         {/* <PlaylistCoverContainer>
           <ExternalLink to={selectedTrack.external_urls.spotify}>

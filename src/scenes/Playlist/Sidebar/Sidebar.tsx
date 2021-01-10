@@ -10,6 +10,7 @@ type Props = {
 }
 
 const Sidebar: React.FC<Props> = ({ playlist }) => {
+  const [isVisible, setIsVisible] = React.useState(false)
   // might show this somewhere else
   // const duration = React.useMemo(
   //   () =>
@@ -20,7 +21,7 @@ const Sidebar: React.FC<Props> = ({ playlist }) => {
   // )
 
   return (
-    <Container>
+    <Container isVisible={isVisible}>
       <Content>
         <_RotateVertical>
           <TitleContainer>
@@ -52,10 +53,12 @@ const Sidebar: React.FC<Props> = ({ playlist }) => {
   )
 }
 
-const Container = styled.div`
+const Container = styled.div<{ isVisible: boolean }>`
   position: fixed;
   height: 100vh;
   display: flex;
+
+  transform: ${({ isVisible }) => `translateX(${isVisible ? 0 : -100}px)`};
 `
 
 const Content = styled.div`

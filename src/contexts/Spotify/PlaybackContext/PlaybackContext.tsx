@@ -16,7 +16,23 @@ const PlaybackStateContext = React.createContext<PlaybackState | undefined>(
 export const usePlaybackState = (): PlaybackState => {
   const context = React.useContext(PlaybackStateContext)
   if (!context) {
-    throw Error('Attempted to use SpotifyState without a provider!')
+    throw Error('Attempted to use PlaybackState without a provider!')
+  }
+  return context
+}
+
+type ProgressState = {
+  progressMs: number
+}
+
+const ProgressStateContext = React.createContext<ProgressState | undefined>(
+  undefined
+)
+
+export const usePlaybackProgress = (): ProgressState => {
+  const context = React.useContext(ProgressStateContext)
+  if (!context) {
+    throw Error('Attempted to use ProgressState without a provider!')
   }
   return context
 }
@@ -24,7 +40,6 @@ export const usePlaybackState = (): PlaybackState => {
 type PlaybackActions = {
   isSelectedTrack: (id: string) => boolean
   playPauseTrack: (track?: SpotifyApi.TrackObjectFull) => void
-  retrieveProgress: () => number
 }
 
 const PlaybackActionsContext = React.createContext<PlaybackActions | undefined>(
@@ -34,13 +49,9 @@ const PlaybackActionsContext = React.createContext<PlaybackActions | undefined>(
 export const usePlaybackActions = (): PlaybackActions => {
   const context = React.useContext(PlaybackActionsContext)
   if (!context) {
-    throw Error('Attempted to use SpotifyActions without a provider!')
+    throw Error('Attempted to use PlaybackActions without a provider!')
   }
   return context
-}
-
-type Props = {
-  playlistUri: string
 }
 
 /**
@@ -79,6 +90,8 @@ const usePlayback = (): SpotifyApi.CurrentlyPlayingObject => {
   return playback
 }
 
+type Props = { playlistUri: string }
+
 export const PlaybackProvider: React.FC<Props> = React.memo(
   ({ playlistUri, children }) => {
     const playback = usePlayback()
@@ -104,10 +117,12 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
     // refs, and have callbacks to retrieve the latest value (getIsPlaying, getSelectedTrack)
     // this is because changing `isPlaying` and `selectedTrack` have undesirable effects where
     // all callbacks/states that are subscribed to them as dependences end up re-rendering
-    const state = React.useMemo(() => ({ isPlaying, selectedTrack }), [
+    const playbackState = React.useMemo(() => ({ isPlaying, selectedTrack }), [
       isPlaying,
       selectedTrack,
     ])
+
+    const progressState = React.useMemo(() => ({ progressMs }), [progressMs])
 
     // since progress changes often, it's not a great thing to have in a dependency array;
     // a ref is used instead
@@ -115,10 +130,6 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
     React.useEffect(() => {
       progressRef.current = progressMs
     }, [progressMs])
-
-    const retrieveProgress = React.useCallback(() => {
-      return progressRef.current
-    }, [])
 
     const selectedTrackId = React.useMemo(() => selectedTrack?.id, [
       selectedTrack,
@@ -206,15 +217,17 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
     ])
 
     const actions: PlaybackActions = React.useMemo(
-      () => ({ isSelectedTrack, playPauseTrack, retrieveProgress }),
-      [isSelectedTrack, playPauseTrack, retrieveProgress]
+      () => ({ isSelectedTrack, playPauseTrack }),
+      [isSelectedTrack, playPauseTrack]
     )
 
     return (
-      <PlaybackStateContext.Provider value={state}>
-        <PlaybackActionsContext.Provider value={actions}>
-          {children}
-        </PlaybackActionsContext.Provider>
+      <PlaybackStateContext.Provider value={playbackState}>
+        <ProgressStateContext.Provider value={progressState}>
+          <PlaybackActionsContext.Provider value={actions}>
+            {children}
+          </PlaybackActionsContext.Provider>
+        </ProgressStateContext.Provider>
       </PlaybackStateContext.Provider>
     )
   }

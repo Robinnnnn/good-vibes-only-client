@@ -20,8 +20,6 @@ type Props = {
 }
 
 const Track: React.FC<Props> = ({ position, data: track }) => {
-  // TODO: check if we can make a connected component using next ~5 lines
-  // to prevent frequent rerenders
   const { isPlaying: activePlayback } = usePlaybackState()
   const { isSelectedTrack, playPauseTrack } = usePlaybackActions()
   const isSelected = isSelectedTrack(track.id)

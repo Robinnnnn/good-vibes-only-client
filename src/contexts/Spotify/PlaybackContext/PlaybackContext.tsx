@@ -7,7 +7,6 @@ import { SECOND } from '../../../util/time'
 type PlaybackState = {
   isPlaying: boolean
   selectedTrack?: SpotifyApi.TrackObjectFull
-  context: SpotifyApi.ContextObject
 }
 
 const PlaybackStateContext = React.createContext<PlaybackState | undefined>(
@@ -57,9 +56,10 @@ const usePlayback = (): SpotifyApi.CurrentlyPlayingObject => {
     playbackInstance: { device_id: thisDeviceId },
   } = useSpotifyState()
 
-  const { data: playback } = useSWR('getMyCurrentPlaybackState', {
-    refreshInterval: 2 * SECOND,
-  })
+  const { data: playback } = useSWR<SpotifyApi.CurrentPlaybackResponse>(
+    'getMyCurrentPlaybackState',
+    { refreshInterval: 2 * SECOND }
+  )
 
   const initializePlaybackOnCurrentDevice = React.useCallback(async () => {
     // https://doxdox.org/jmperez/spotify-web-api-js#src-spotify-web-api.js-constr.prototype.transfermyplayback
@@ -87,7 +87,8 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
       is_playing: serverIsPlaying,
       progress_ms: progressMs,
       item: serverSelectedTrack,
-      context,
+      // TODO: there are more fields in here, such as `context`, which may
+      // be useful in the future
     } = playback
 
     const [selectedTrack, setSelectedTrack] = React.useState<
@@ -99,14 +100,10 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
       setOptimisticUpdateInProgress,
     ] = React.useState<boolean>(false)
 
-    const state = React.useMemo(
-      () => ({
-        isPlaying,
-        selectedTrack,
-        context,
-      }),
-      [context, isPlaying, selectedTrack]
-    )
+    const state = React.useMemo(() => ({ isPlaying, selectedTrack }), [
+      isPlaying,
+      selectedTrack,
+    ])
 
     // since progress changes often, it's not a great thing to have in a dependency array;
     // a ref is used instead

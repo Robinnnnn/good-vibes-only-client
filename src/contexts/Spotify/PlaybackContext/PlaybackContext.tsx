@@ -6,7 +6,6 @@ import { SECOND } from '../../../util/time'
 
 type PlaybackState = {
   isPlaying: boolean
-  progressMs: number
   selectedTrack?: SpotifyApi.TrackObjectFull
   context: SpotifyApi.ContextObject
 }
@@ -26,6 +25,7 @@ export const usePlaybackState = (): PlaybackState => {
 type PlaybackActions = {
   isSelectedTrack: (id: string) => boolean
   playPauseTrack: (track?: SpotifyApi.TrackObjectFull) => void
+  retrieveProgress: () => number
 }
 
 const PlaybackActionsContext = React.createContext<PlaybackActions | undefined>(
@@ -99,7 +99,25 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
       setOptimisticUpdateInProgress,
     ] = React.useState<boolean>(false)
 
-    const state = { isPlaying, progressMs, selectedTrack, context }
+    const state = React.useMemo(
+      () => ({
+        isPlaying,
+        selectedTrack,
+        context,
+      }),
+      [context, isPlaying, selectedTrack]
+    )
+
+    // since progress changes often, it's not a great thing to have in a dependency array;
+    // a ref is used instead
+    const progressRef = React.useRef<number>(progressMs)
+    React.useEffect(() => {
+      progressRef.current = progressMs
+    }, [progressMs])
+
+    const retrieveProgress = React.useCallback(() => {
+      return progressRef.current
+    }, [])
 
     const selectedTrackId = React.useMemo(() => selectedTrack?.id, [
       selectedTrack,
@@ -133,13 +151,13 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
           // track URI
           offset: { uri: track.uri },
           // either resume track or start from beginning
-          position_ms: shouldResume ? progressMs : 0,
+          position_ms: shouldResume ? progressRef.current : 0,
         }
         sdk.play(playOptions)
         setIsPlaying(true)
         setSelectedTrack(track)
       },
-      [isPlaying, selectedTrack, isSelectedTrack, playlistUri, progressMs, sdk]
+      [isPlaying, selectedTrack, isSelectedTrack, playlistUri, sdk]
     )
 
     // console.log({
@@ -168,7 +186,8 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
       if (optimisticUpdateInProgress && !synced) return
 
       // Server is source of truth; UI will catch up
-      if (!optimisticUpdateInProgress) {
+      // NOTE: having `&& !synced` here might mess things up
+      if (!optimisticUpdateInProgress && !synced) {
         setSelectedTrack(serverSelectedTrack)
         setIsPlaying(serverIsPlaying)
       }
@@ -186,8 +205,8 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
     ])
 
     const actions: PlaybackActions = React.useMemo(
-      () => ({ isSelectedTrack, playPauseTrack }),
-      [isSelectedTrack, playPauseTrack]
+      () => ({ isSelectedTrack, playPauseTrack, retrieveProgress }),
+      [isSelectedTrack, playPauseTrack, retrieveProgress]
     )
 
     return (

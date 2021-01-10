@@ -1,10 +1,11 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { keyframes } from '@emotion/core'
+
 import { usePlaybackState } from '../../../contexts/Spotify/PlaybackContext/PlaybackContext'
 import ExternalLink from '../../../shared/notifications/ExternalLink'
 import { ImageWithSuspense } from '../../../contexts/ImageLoader/ImageLoaderContext'
 import PlaybackNav from './PlaybackNav'
+import ProgressBar from './ProgressBar'
 
 type Props = {}
 
@@ -13,16 +14,9 @@ const PlaybackController: React.FC<Props> = () => {
   // to prevent frequent rerenders. right now `selectedTrack` will log every second
   const { selectedTrack } = usePlaybackState()
 
-  React.useEffect(() => {
-    console.log({ selectedTrack })
-  }, [selectedTrack])
-
   return (
     <Container>
-      <ProgressBorder>
-        <GradientBorder />
-        <ProgressCurtain />
-      </ProgressBorder>
+      <ProgressBar />
       <Content>
         <TextContent>
           <PlaybackNav />
@@ -71,50 +65,6 @@ const Container = styled.div`
   /* inset version */
   /* box-shadow: inset 6px 0px 20px -10px #888cff; */
   box-shadow: 6px 0px 8px -2px #a1a4ff;
-`
-
-// TODO: make component if exists in multiple places
-const backgroundGradient = keyframes`
-  from {
-    background-position: 0;
-  }
-  to {
-    background-position: 100%;
-  }
-`
-
-const ProgressBorder = styled.div`
-  position: relative;
-  height: 3px;
-  width: 100%;
-`
-
-const GradientBorder = styled.div`
-  height: 100%;
-
-  background: linear-gradient(
-    90deg,
-    #ae70ff 0%,
-    #93d6ff 15%,
-    #8589ff 35%,
-    #ae70ff 50%,
-    #93d6ff 65%,
-    #8589ff 85%,
-    #ae70ff 100%
-  );
-  background-size: 200% 100%;
-  animation: ${backgroundGradient} 5s linear infinite reverse;
-`
-
-const ProgressCurtain = styled.div`
-  position: absolute;
-
-  height: 100%;
-  background: white;
-  opacity: 0.6;
-  top: 0;
-  right: 0;
-  width: 33%;
 `
 
 const Content = styled.div`

@@ -106,7 +106,7 @@ export default function useOptimisticProgress(
 
       // if we should stop optimistic updates, it means we're waiting
       // for the server to catch up
-      if (!pauseOptimisticUpdatesUntilServerCatchesUp.current) return
+      if (pauseOptimisticUpdatesUntilServerCatchesUp.current) return
 
       // if we just received a server update, let's skip the client
       // to avoid unnecessarily aggressive updates

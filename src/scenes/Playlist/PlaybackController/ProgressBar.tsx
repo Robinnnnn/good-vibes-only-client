@@ -29,6 +29,26 @@ const ProgressBar: React.FC<Props> = ({ duration, isPlaying }) => {
   )
 }
 
+const PROGRESS_BAR_HEIGHT_PX = 3
+const CLICKABLE_PADDING_PX = 10
+
+const ProgressBorder = styled.div`
+  position: relative;
+  height: ${PROGRESS_BAR_HEIGHT_PX}px;
+  width: 100%;
+
+  // add invisible padding so track seeking is easier to hover over with mouse
+  padding: ${CLICKABLE_PADDING_PX}px 0px;
+  margin-top: -${CLICKABLE_PADDING_PX}px;
+
+  transform: scaleY(1);
+  transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
+
+  &:hover {
+    transform: scaleY(2.5);
+  }
+`
+
 // TODO: make component if exists in multiple places
 const backgroundGradient = keyframes`
   from {
@@ -37,12 +57,6 @@ const backgroundGradient = keyframes`
   to {
     background-position: 100%;
   }
-`
-
-const ProgressBorder = styled.div`
-  position: relative;
-  height: 3px;
-  width: 100%;
 `
 
 const GradientBorder = styled.div`
@@ -62,13 +76,15 @@ const GradientBorder = styled.div`
   animation: ${backgroundGradient} 5s linear infinite reverse;
 `
 
+// a shrinking bar with white opacity, to pretend as if the colored
+// progress bar is inching along from left to right
 const ProgressCurtain = styled.div<{ progress: number }>`
   position: absolute;
 
-  height: 100%;
+  height: ${PROGRESS_BAR_HEIGHT_PX}px;
   background: white;
   opacity: 0.6;
-  top: 0;
+  top: ${CLICKABLE_PADDING_PX}px;
   right: 0;
   width: ${({ progress }) => 100 - progress}%;
 `

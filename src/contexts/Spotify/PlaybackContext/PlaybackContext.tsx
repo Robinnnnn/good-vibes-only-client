@@ -2,7 +2,10 @@ import React from 'react'
 import useSWR from 'swr'
 import { useSpotifyState } from '../ConfigContext/ConfigContext'
 import log, { FLAVORS } from '../../../util/log'
-import { SECOND } from '../../../util/time'
+import { PLAYBACK_REFRESH_INTERVAL } from './constants'
+import useOptimisticProgress, {
+  ProgressControls,
+} from './useOptimisticProgress'
 
 type PlaybackState = {
   isPlaying: boolean
@@ -21,16 +24,12 @@ export const usePlaybackState = (): PlaybackState => {
   return context
 }
 
-type ProgressState = {
-  progressMs: number
-}
+const PlaybackProgressContext = React.createContext<
+  ProgressControls | undefined
+>(undefined)
 
-const ProgressStateContext = React.createContext<ProgressState | undefined>(
-  undefined
-)
-
-export const usePlaybackProgress = (): ProgressState => {
-  const context = React.useContext(ProgressStateContext)
+export const usePlaybackProgress = (): ProgressControls => {
+  const context = React.useContext(PlaybackProgressContext)
   if (!context) {
     throw Error('Attempted to use ProgressState without a provider!')
   }
@@ -69,7 +68,7 @@ const usePlayback = (): SpotifyApi.CurrentlyPlayingObject => {
 
   const { data: playback } = useSWR<SpotifyApi.CurrentPlaybackResponse>(
     'getMyCurrentPlaybackState',
-    { refreshInterval: 2 * SECOND }
+    { refreshInterval: PLAYBACK_REFRESH_INTERVAL }
   )
 
   const initializePlaybackOnCurrentDevice = React.useCallback(async () => {
@@ -98,7 +97,7 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
 
     const {
       is_playing: serverIsPlaying,
-      progress_ms: progressMs,
+      progress_ms: serverProgressMs,
       item: serverSelectedTrack,
       // TODO: there are more fields in here, such as `context`, which may
       // be useful in the future
@@ -113,23 +112,10 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
       setOptimisticUpdateInProgress,
     ] = React.useState<boolean>(false)
 
-    // TODO: similar to progressRef further below, it might make sense to make all of these
-    // refs, and have callbacks to retrieve the latest value (getIsPlaying, getSelectedTrack)
-    // this is because changing `isPlaying` and `selectedTrack` have undesirable effects where
-    // all callbacks/states that are subscribed to them as dependences end up re-rendering
     const playbackState = React.useMemo(() => ({ isPlaying, selectedTrack }), [
       isPlaying,
       selectedTrack,
     ])
-
-    const progressState = React.useMemo(() => ({ progressMs }), [progressMs])
-
-    // since progress changes often, it's not a great thing to have in a dependency array;
-    // a ref is used instead
-    const progressRef = React.useRef<number>(progressMs)
-    React.useEffect(() => {
-      progressRef.current = progressMs
-    }, [progressMs])
 
     const selectedTrackId = React.useMemo(() => selectedTrack?.id, [
       selectedTrack,
@@ -139,9 +125,23 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
       [selectedTrackId]
     )
 
+    const progressControls = useOptimisticProgress(serverProgressMs, isPlaying)
+    const {
+      setProgressMs,
+      setLastManuallyTriggeredClientUpdate,
+    } = progressControls
+
+    // since progress changes often, it could trigger a ton of unintended rerenders
+    // if placed in a dependency array; a ref is used instead.
+    const progressRef = React.useRef<number>(serverProgressMs)
+    React.useEffect(() => {
+      progressRef.current = serverProgressMs
+    }, [serverProgressMs])
+
     const { sdk } = useSpotifyState()
 
-    // TODO: this needs to handle if no tracks are active at all, play first track in playlist
+    // TODO: this needs to handle the followinng cases:
+    // 1) if no tracks are active at all, play first track in playlist
     const playPauseTrack = React.useCallback(
       (track?: SpotifyApi.TrackObjectFull) => {
         setOptimisticUpdateInProgress(true)
@@ -157,26 +157,33 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
         }
 
         const shouldResume = trackIsSelected && !isPlaying
+        // either:
+        // 1. resume active track from current location, or
+        // 2. start from beginning (whether it's new track or current track)
+        const progressMs = shouldResume ? progressRef.current : 0
         const playOptions: SpotifyApi.PlayParameterObject = {
           // playlist URI
           context_uri: playlistUri,
           // track URI
           offset: { uri: track.uri },
-          // either resume track or start from beginning
-          position_ms: shouldResume ? progressRef.current : 0,
+          position_ms: progressMs,
         }
         sdk.play(playOptions)
         setIsPlaying(true)
         setSelectedTrack(track)
+        setProgressMs(progressMs)
+        setLastManuallyTriggeredClientUpdate(Date.now())
       },
-      [isPlaying, selectedTrack, isSelectedTrack, playlistUri, sdk]
+      [
+        selectedTrack,
+        isSelectedTrack,
+        isPlaying,
+        playlistUri,
+        sdk,
+        setProgressMs,
+        setLastManuallyTriggeredClientUpdate,
+      ]
     )
-
-    // console.log({
-    //   server: serverSelectedTrack?.name,
-    //   ui: selectedTrack?.name,
-    //   optimisticUpdateInProgress,
-    // })
 
     /**
      * Handles race condition where cached server data is outdated
@@ -186,13 +193,6 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
       const selectedTrackInSync = serverSelectedTrack?.id === selectedTrackId
       const playStateInSync = serverIsPlaying === isPlaying
       const synced = selectedTrackInSync && playStateInSync
-
-      console.log({
-        serverIsPlaying,
-        isPlaying,
-        synced,
-        optimisticUpdateInProgress,
-      })
 
       // UI is source of truth; server will catch up
       if (optimisticUpdateInProgress && !synced) return
@@ -223,11 +223,11 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
 
     return (
       <PlaybackStateContext.Provider value={playbackState}>
-        <ProgressStateContext.Provider value={progressState}>
+        <PlaybackProgressContext.Provider value={progressControls}>
           <PlaybackActionsContext.Provider value={actions}>
             {children}
           </PlaybackActionsContext.Provider>
-        </ProgressStateContext.Provider>
+        </PlaybackProgressContext.Provider>
       </PlaybackStateContext.Provider>
     )
   }

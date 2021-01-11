@@ -11,10 +11,17 @@ export type ProgressControls = {
   >
 }
 
-export default function useOptimisticProgress(
-  serverProgressMs: number,
+type Props = {
+  serverProgressMs: number
+  selectedTrackInSync: boolean
   isPlaying: boolean
-): ProgressControls {
+}
+
+export default function useOptimisticProgress({
+  serverProgressMs,
+  selectedTrackInSync,
+  isPlaying,
+}: Props): ProgressControls {
   // the progress that's displayed to the client. this may not be 100% in sync with
   // the server, since we only receive updates from the server every 2s
   const [clientProgressMs, setClientProgressMs] = React.useState(
@@ -30,7 +37,9 @@ export default function useOptimisticProgress(
   // condition against the client
   const lastServerUpdate = React.useRef<number>(Date.now())
 
-  // some refs to prevent unnecessary rerenders
+  // some refs to prevent unnecessary reruns of useEffect
+  // TODO: we should be able to skip these if we use an "isOptimisticallyUpdating" ref,
+  // and in the useEffect just return if an optimistic update is occurring
   const clientProgressMsRef = React.useRef(clientProgressMs)
   React.useEffect(() => {
     clientProgressMsRef.current = clientProgressMs
@@ -41,20 +50,26 @@ export default function useOptimisticProgress(
   React.useEffect(() => {
     lastManuallyTriggeredClientUpdateRef.current = lastManuallyTriggeredClientUpdate
   }, [lastManuallyTriggeredClientUpdate])
+  const selectedTrackInSyncRef = React.useRef(selectedTrackInSync)
+  React.useEffect(() => {
+    selectedTrackInSyncRef.current = selectedTrackInSync
+  }, [selectedTrackInSync])
 
   // disables client updates
   const pauseOptimisticUpdatesUntilServerCatchesUp = React.useRef(false)
 
   // handle server updates
   React.useEffect(() => {
-    /**
-     * if client has progressed further than server, client updates should
-     * be disabled until the server catches up. this prevents the progress
-     * from flickering "backwards" when syncing with server.
-     */
-    if (serverProgressMs < clientProgressMsRef.current) {
-      pauseOptimisticUpdatesUntilServerCatchesUp.current = true
-      return
+    if (selectedTrackInSyncRef.current) {
+      /**
+       * if client has progressed further than server, client updates should
+       * be disabled until the server catches up. this prevents the progress
+       * from flickering "backwards" when syncing with server.
+       */
+      if (serverProgressMs < clientProgressMsRef.current) {
+        pauseOptimisticUpdatesUntilServerCatchesUp.current = true
+        return
+      }
     }
 
     // if server time is on par with client time, allow optimistic updates
@@ -62,26 +77,17 @@ export default function useOptimisticProgress(
       pauseOptimisticUpdatesUntilServerCatchesUp.current = false
     }
 
-    // if we've just triggered an optimistic update (e.g. picked out a new
-    // song which resets the progress timestamp to 0), we should kill any
-    // attempt for the server time to apply, as it may be behing / stuck
-    // on the previous song. we won't know whether the server is definitive
-    // until we wait 1 full refresh cycle (2s)
+    /**
+     * if we've just triggered an optimistic update (e.g. picked out a new
+     * song which resets the progress timestamp to 0), we should kill any
+     * attempt for the server time to apply, as it may be behind / stuck
+     * on the previous song. we won't know whether the server time is legit
+     * until we wait 1 full refresh cycle (2s)
+     */
     const timeSinceLastClientUpdate =
       Date.now() - lastManuallyTriggeredClientUpdateRef.current
-    if (timeSinceLastClientUpdate < PLAYBACK_REFRESH_INTERVAL) {
-      return
-    } else {
-      console.log(
-        '=== setting server progress in effect client',
-        clientProgressMsRef.current
-      )
-      console.log(
-        '=== setting server progress in effect server',
-        serverProgressMs,
-        Date.now() / 1000
-      )
-    }
+    if (timeSinceLastClientUpdate < PLAYBACK_REFRESH_INTERVAL) return
+
     setClientProgressMs(serverProgressMs)
     lastServerUpdate.current = Date.now()
   }, [serverProgressMs])

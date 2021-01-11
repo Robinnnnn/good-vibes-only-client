@@ -124,8 +124,17 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
       (id: string) => selectedTrackId === id,
       [selectedTrackId]
     )
+    const selectedTrackInSync = serverSelectedTrack?.id === selectedTrackId
 
-    const progressControls = useOptimisticProgress(serverProgressMs, isPlaying)
+    const optimisticProgressProps = React.useMemo(
+      () => ({
+        serverProgressMs,
+        selectedTrackInSync,
+        isPlaying,
+      }),
+      [isPlaying, selectedTrackInSync, serverProgressMs]
+    )
+    const progressControls = useOptimisticProgress(optimisticProgressProps)
     const {
       setProgressMs,
       setLastManuallyTriggeredClientUpdate,
@@ -190,7 +199,6 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
      * compared to what user clicked
      */
     React.useEffect(() => {
-      const selectedTrackInSync = serverSelectedTrack?.id === selectedTrackId
       const playStateInSync = serverIsPlaying === isPlaying
       const synced = selectedTrackInSync && playStateInSync
 
@@ -214,6 +222,7 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
       selectedTrackId,
       serverIsPlaying,
       isPlaying,
+      selectedTrackInSync,
     ])
 
     const actions: PlaybackActions = React.useMemo(

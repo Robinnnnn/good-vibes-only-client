@@ -14,15 +14,47 @@ type Props = {
 
 const ProgressBar: React.FC<Props> = ({ duration, isPlaying }) => {
   // progress according to server
-  const { progressMs } = usePlaybackProgress()
+  const { progressMs, seekTo } = usePlaybackProgress()
 
   const normalizedProgress = React.useMemo(
     () => (duration ? Number(((100 * progressMs) / duration).toFixed(2)) : 0),
     [progressMs, duration]
   )
 
+  // ref for container element
+  const progressBarElement = React.useRef<HTMLDivElement | null>(null)
+
+  const seekToPositionMs = React.useRef(null)
+
+  const handleMouseMove = React.useCallback(
+    (event) => {
+      const totalWidth = progressBarElement.current?.offsetWidth
+      const hoverWidth = event.pageX
+      const percentHovering = hoverWidth / totalWidth
+      const positionMs = Math.round(duration * percentHovering)
+      seekToPositionMs.current = positionMs
+    },
+    [duration]
+  )
+
+  const handleMouseLeave = React.useCallback(
+    () => (seekToPositionMs.current = null),
+    []
+  )
+
+  const handleSeekTo = React.useCallback(() => {
+    if (seekToPositionMs.current) {
+      seekTo(seekToPositionMs.current)
+    }
+  }, [seekTo])
+
   return (
-    <ProgressBorder>
+    <ProgressBorder
+      ref={progressBarElement}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onClick={handleSeekTo}
+    >
       <GradientBorder />
       <ProgressCurtain progress={normalizedProgress} />
     </ProgressBorder>
@@ -40,9 +72,10 @@ const ProgressBorder = styled.div`
   // add invisible padding so track seeking is easier to hover over with mouse
   padding: ${CLICKABLE_PADDING_PX}px 0px;
   margin-top: -${CLICKABLE_PADDING_PX}px;
+  cursor: pointer;
 
   transform: scaleY(1);
-  transition: transform 0.5s cubic-bezier(0.14, 0.97, 1, 1);
+  transition: transform 0.4s cubic-bezier(0.21, 0.82, 1, 1);
 
   &:hover {
     transform: scaleY(2.5);

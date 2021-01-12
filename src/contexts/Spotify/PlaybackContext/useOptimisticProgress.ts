@@ -1,4 +1,5 @@
 import React from 'react'
+import SpotifyWebApi from 'spotify-web-api-js'
 import { PLAYBACK_REFRESH_INTERVAL } from './constants'
 
 const UPDATE_PROGRESS_FREQUENCY_MS = 250
@@ -9,17 +10,20 @@ export type ProgressControls = {
   setLastManuallyTriggeredClientUpdate: React.Dispatch<
     React.SetStateAction<number>
   >
+  seekTo: (positionMs: number) => void
 }
 
 type Props = {
   serverProgressMs: number
-  selectedTrackInSync: boolean
+  serverSeekTo: SpotifyWebApi.SpotifyWebApiJs['seek']
+  isSelectedTrackInSync: boolean
   isPlaying: boolean
 }
 
 export default function useOptimisticProgress({
   serverProgressMs,
-  selectedTrackInSync,
+  serverSeekTo,
+  isSelectedTrackInSync,
   isPlaying,
 }: Props): ProgressControls {
   // the progress that's displayed to the client. this may not be 100% in sync with
@@ -50,10 +54,10 @@ export default function useOptimisticProgress({
   React.useEffect(() => {
     lastManuallyTriggeredClientUpdateRef.current = lastManuallyTriggeredClientUpdate
   }, [lastManuallyTriggeredClientUpdate])
-  const selectedTrackInSyncRef = React.useRef(selectedTrackInSync)
+  const selectedTrackInSyncRef = React.useRef(isSelectedTrackInSync)
   React.useEffect(() => {
-    selectedTrackInSyncRef.current = selectedTrackInSync
-  }, [selectedTrackInSync])
+    selectedTrackInSyncRef.current = isSelectedTrackInSync
+  }, [isSelectedTrackInSync])
 
   // disables client updates
   const pauseOptimisticUpdatesUntilServerCatchesUp = React.useRef(false)
@@ -125,13 +129,25 @@ export default function useOptimisticProgress({
     return () => clearInterval(id)
   }, [])
 
+  const seekTo = React.useCallback(
+    (positionMs: number) => {
+      // immediately set client position
+      setClientProgressMs(positionMs)
+      setLastManuallyTriggeredClientUpdate(Date.now())
+      // send request to server
+      serverSeekTo(positionMs)
+    },
+    [serverSeekTo]
+  )
+
   const controls = React.useMemo(
     () => ({
       progressMs: clientProgressMs,
       setProgressMs: setClientProgressMs,
       setLastManuallyTriggeredClientUpdate,
+      seekTo,
     }),
-    [clientProgressMs]
+    [clientProgressMs, seekTo]
   )
 
   return controls

@@ -124,15 +124,18 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
       (id: string) => selectedTrackId === id,
       [selectedTrackId]
     )
-    const selectedTrackInSync = serverSelectedTrack?.id === selectedTrackId
+    const isSelectedTrackInSync = serverSelectedTrack?.id === selectedTrackId
+
+    const { sdk } = useSpotifyState()
 
     const optimisticProgressProps = React.useMemo(
       () => ({
         serverProgressMs,
-        selectedTrackInSync,
+        serverSeekTo: sdk.seek,
+        isSelectedTrackInSync,
         isPlaying,
       }),
-      [isPlaying, selectedTrackInSync, serverProgressMs]
+      [isPlaying, isSelectedTrackInSync, serverProgressMs, sdk.seek]
     )
     const progressControls = useOptimisticProgress(optimisticProgressProps)
     const {
@@ -146,8 +149,6 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
     React.useEffect(() => {
       progressRef.current = serverProgressMs
     }, [serverProgressMs])
-
-    const { sdk } = useSpotifyState()
 
     // TODO: this needs to handle the followinng cases:
     // 1) if no tracks are active at all, play first track in playlist
@@ -187,8 +188,8 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
         selectedTrack,
         isSelectedTrack,
         isPlaying,
-        playlistUri,
         sdk,
+        playlistUri,
         setProgressMs,
         setLastManuallyTriggeredClientUpdate,
       ]
@@ -200,7 +201,7 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
      */
     React.useEffect(() => {
       const playStateInSync = serverIsPlaying === isPlaying
-      const synced = selectedTrackInSync && playStateInSync
+      const synced = isSelectedTrackInSync && playStateInSync
 
       // UI is source of truth; server will catch up
       if (optimisticUpdateInProgress && !synced) return
@@ -222,7 +223,7 @@ export const PlaybackProvider: React.FC<Props> = React.memo(
       selectedTrackId,
       serverIsPlaying,
       isPlaying,
-      selectedTrackInSync,
+      isSelectedTrackInSync,
     ])
 
     const actions: PlaybackActions = React.useMemo(

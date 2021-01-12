@@ -69,6 +69,9 @@ const Container = styled.div`
 
   /* inset version */
   /* box-shadow: inset 6px 0px 20px -10px #888cff; */
+
+  // TODO: handle this on the ProgressBar level so that
+  // box shadow is maintained as it expands
   box-shadow: 6px 0px 8px -2px #a1a4ff;
 `
 

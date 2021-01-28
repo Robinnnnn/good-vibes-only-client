@@ -64,6 +64,8 @@ const Track: React.FC<Props> = ({ position, data: track }) => {
       <AlbumCover
         position={position}
         thumbnailSize={100}
+        // TODO: this pulls the highest res image, which is probably over kill
+        // we need to do this though since sometimes images[1] doesn't exist
         imgUrl={track.album.images[0].url}
         isHovering={isHovering}
         isPlaying={isPlaying}
@@ -92,7 +94,7 @@ const fadein = keyframes`
 
 const staggeredFade = ({ position }) => css`
   opacity: 0;
-  animation: ${fadein} 1200ms;
+  animation: ${fadein} 800ms;
   animation-delay: ${position * 50}ms;
   animation-fill-mode: forwards;
 `

@@ -6,12 +6,11 @@ import { ImageWithSuspense } from '../../../contexts/ImageLoader/ImageLoaderCont
 import ExternalLink from '../../../shared/notifications/ExternalLink'
 
 type Props = {
-  data: SpotifyApi.SinglePlaylistResponse
+  playlist: SpotifyApi.SinglePlaylistResponse
 }
 
-const Sidebar: React.FC<Props> = ({ data: playlist }) => {
-  console.log({ playlist })
-
+const Sidebar: React.FC<Props> = ({ playlist }) => {
+  const [isVisible, setIsVisible] = React.useState(false)
   // might show this somewhere else
   // const duration = React.useMemo(
   //   () =>
@@ -22,7 +21,7 @@ const Sidebar: React.FC<Props> = ({ data: playlist }) => {
   // )
 
   return (
-    <Container>
+    <Container isVisible={isVisible}>
       <Content>
         <_RotateVertical>
           <TitleContainer>
@@ -41,6 +40,8 @@ const Sidebar: React.FC<Props> = ({ data: playlist }) => {
         <PlaylistCoverContainer>
           <ExternalLink to={playlist.external_urls.spotify}>
             <ImageWithSuspense
+              // TODO: this pulls the highest res image, which is probably over kill
+              // we need to do this though since sometimes images[1] doesn't exist
               src={playlist.images[0].url}
               Component={<Cover src={playlist.images[0].url} />}
             />
@@ -52,10 +53,12 @@ const Sidebar: React.FC<Props> = ({ data: playlist }) => {
   )
 }
 
-const Container = styled.div`
+const Container = styled.div<{ isVisible: boolean }>`
   position: fixed;
   height: 100vh;
   display: flex;
+
+  transform: ${({ isVisible }) => `translateX(${isVisible ? 0 : -100}px)`};
 `
 
 const Content = styled.div`
@@ -63,6 +66,7 @@ const Content = styled.div`
   flex-direction: column;
 `
 
+// TODO: make component if exists in multiple places
 const backgroundGradient = keyframes`
   from {
     background-position: 0;
@@ -74,7 +78,6 @@ const backgroundGradient = keyframes`
 
 const GradientBorder = styled.div`
   /* attributes are flipped because we're rotated */
-  margin-left: 2px;
   height: 2px;
   width: 100vh;
   transform: rotate(90deg);
@@ -104,8 +107,9 @@ const _RotateVertical = styled.div`
 
   display: flex;
 
-  /* box-shadow: inset 6px 0px 20px -10px #8c8c8c; */
-  box-shadow: inset 6px 0px 20px -10px #888cff;
+  /* inset version */
+  /* box-shadow: inset 6px 0px 20px -10px #888cff; */
+  box-shadow: 0px 6px 12px -1px #888cff;
 `
 
 const TitleContainer = styled.div`

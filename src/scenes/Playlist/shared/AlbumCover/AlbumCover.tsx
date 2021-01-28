@@ -105,7 +105,7 @@ const CoverContainer = styled.div<{
   justify-content: center;
   align-items: center;
 
-  animation: ${rotateIn} 1200ms;
+  animation: ${rotateIn} 1000ms;
   animation-delay: ${({ position }) => `${position * 50}ms`};
   animation-fill-mode: forwards;
   animation-timing-function: cubic-bezier(0,1.39,.67,.98);

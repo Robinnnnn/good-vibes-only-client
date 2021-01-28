@@ -9,6 +9,7 @@ import ListView from './ListView/ListView'
 import GridView from './GridView/GridView'
 import { navigate } from '@reach/router'
 import { ImageLoaderProvider } from '../../contexts/ImageLoader/ImageLoaderContext'
+import PlaybackController from './PlaybackController/PlaybackController'
 
 /**
  * Matches the 22-char Spotify ID out of the following strings:
@@ -35,7 +36,7 @@ const Playlist: React.FC<RouteComponentProps<Props>> = ({
 
   const { logout } = useAuthActions()
 
-  const { data } = useSWR<SpotifyApi.SinglePlaylistResponse>([
+  const { data: playlist } = useSWR<SpotifyApi.SinglePlaylistResponse>([
     'getPlaylist',
     playlistId,
   ])
@@ -57,16 +58,17 @@ const Playlist: React.FC<RouteComponentProps<Props>> = ({
 
   return (
     <ImageLoaderProvider>
-      <PlaybackProvider playlistUri={data.uri}>
+      <PlaybackProvider playlistUri={playlist.uri}>
         <PlaylistContainer>
-          <Sidebar data={data} />
+          <Sidebar playlist={playlist} />
           <TracksContainer>
             {view === 'list' ? (
-              <ListView data={data} />
+              <ListView playlist={playlist} />
             ) : (
-              <GridView data={data} />
+              <GridView playlist={playlist} />
             )}
           </TracksContainer>
+          <PlaybackController />
         </PlaylistContainer>
       </PlaybackProvider>
     </ImageLoaderProvider>
@@ -78,7 +80,7 @@ const PlaylistContainer = styled.div`
 `
 
 const TracksContainer = styled.div`
-  padding: 80px 80px 80px 160px;
+  padding: 80px;
 `
 
 export default React.memo(Playlist)
